@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.db.utils import DataError
 from optparse import make_option
 
 import urllib
@@ -45,7 +46,7 @@ class Command(BaseCommand):
 
                 try:
                     data = {'name':row[1], 'age':row[2], 'gender': row[3][0], 'race':row[4],
-                            'city':row[8], 'state':row[9], 'agency_responsible':row[12],
+                            'city':row[8], 'state':row[9][:2], 'agency_responsible':row[12],
                             'photo_url': row[5], 'source_url':row[16]}
 
                     #handle malformed dates
@@ -78,7 +79,7 @@ class Command(BaseCommand):
                         print 'created #'+uid
                     else:
                         print 'updated #'+uid
-                except ValueError,e:
+                except (ValueError,DataError), e:
                     print 'error saving #'+uid
                     print e
                     print row
