@@ -6,12 +6,12 @@ class FatalEncounter(models.Model):
   age = models.IntegerField(null=True)
   gender = models.CharField(null=True, max_length=1, choices=(('M','Male'),('F','Female')))
   race = models.CharField(null=True, max_length=100)
-  photo_url = models.URLField(blank=True, null=True)
+  photo_url = models.URLField(blank=True, null=True, max_length=1000)
   date_of_injury = models.DateField(null=True)
   city = models.CharField(max_length=255, null=True)
   state = models.CharField(max_length=2, null=True)
   agency_responsible = models.CharField(max_length=255, null=True)
-  source_url = models.URLField(null=True)
+  source_url = models.URLField(null=True, max_length=1000)
   uid = models.CharField(max_length=10, unique=True)
 
   def __unicode__(self):
