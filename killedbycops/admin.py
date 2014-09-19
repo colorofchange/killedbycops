@@ -1,4 +1,3 @@
-from django.contrib.admin import AdminSite
+from django.contrib import admin
 
-admin_site = AdminSite('KilledByCops')
-admin_site.site_header = 'KilledByCops Admin'
+admin.site.site_header = 'KilledByCops Admin'
