@@ -4,6 +4,7 @@ from fatalencounters.models import FatalEncounter
 class FatalEncounterAdmin(admin.ModelAdmin):
   list_filter = ('gender', 'race')
   list_display = ('name', 'age', 'gender', 'race', 'date_of_injury', 'photo_tag')
+  search_fields = ('name','city','state')
   date_hierarchy = 'date_of_injury'
   fieldsets = [
     ('Biographical', {'fields': ['name','age','gender','race']}),
