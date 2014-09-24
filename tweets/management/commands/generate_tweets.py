@@ -4,10 +4,6 @@ from optparse import make_option
 from django.template.loader import render_to_string
 from django.forms.models import model_to_dict
 
-from geopy.geocoders import GeoNames
-from tweets.api import twitter_api
-import tweepy, time
-
 from fatalencounters.models import FatalEncounter
 from tweets.models import Tweet
 from tweets.lookup import AGENCY_ACRONYMS, IMAGE_ID_LOOKUP
@@ -43,7 +39,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         encounters = FatalEncounter.objects.all()
-        rate_limit = 1
 
         if options['only_black']:
             print "only black FatalEncounters"
@@ -81,27 +76,6 @@ class Command(BaseCommand):
             # use shorter template?
 
             #tweet.text = tweet.text.replace('http://placeholder.url', 'http://colorofchange.org/sign/placeholder?source=killedbycops_twitter')
-
-            if options['geocode']:
-                geolocator = GeoNames(username='jlevinger')
-                location = geolocator.geocode("%s, %s" % (fe.city, fe.state))
-                if location:
-                    try:
-                        twitter_location = twitter_api.reverse_geocode(location.latitude, location.longitude, granularity='city')
-                        tweet.location_id = twitter_location.ids()[0]
-                    except tweepy.error.TweepError, e:
-                        if e[0][0]['code'] == 88:
-                            print "rate limited, back off",
-                            if not rate_limit:
-                                rate_limit = 5
-                            else:
-                                rate_limit = rate_limit * 2
-                                if rate_limit > 320:
-                                    rate_limit = 320
-                            print rate_limit,'sec'
-                    finally:
-                        if rate_limit:
-                            time.sleep(rate_limit)
                 
             if options['attach_image']:
                 try:

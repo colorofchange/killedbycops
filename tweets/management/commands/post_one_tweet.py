@@ -1,28 +1,54 @@
 from django.core.management.base import BaseCommand
+from optparse import make_option
+from django.utils.timezone import now as utcnow
+
 import urllib
+
+from geopy.geocoders import GeoNames
 from tweets.api import twitter_api
-from datetime import datetime
+import tweepy, sys
 
 from tweets.models import Tweet
 
 class Command(BaseCommand):
+    option_list = BaseCommand.option_list + (
+        make_option('--geocode',
+            action='store_true',
+            dest='geocode',
+            default=True,
+            help='Lookup twitter locations for geocoding'),
+    )
+
     def handle(self, *args, **options):
-        tweet = Tweet.objects.filter(location_id__isnull=False, tweet_sent=False).order_by('?')[0]
+        tweet = Tweet.objects.filter(tweet_sent=False).order_by('?')[0]
 
         d = {'status': tweet.text}
-        if tweet.location_id:
-            d['place_id'] = tweet.location_id
 
-        if tweet.share_image_url:
-            fn, headers = urllib.urlretrieve(tweet.share_image_url)
-            d['filename'] = fn
-            print d
-            status = twitter_api.update_with_media(**d)
-        else:
-            print d
-            status = twitter_api.update_status(**d)
+        if options['geocode']:
+            print "geocoding...",
+            geolocator = GeoNames(username='jlevinger')
+            location = geolocator.geocode("%s, %s" % (tweet.fatal_encounter.city, tweet.fatal_encounter.state))
+            if location:
+                print "got ",location
+                twitter_location = twitter_api.reverse_geocode(location.latitude, location.longitude, granularity='city')
+                tweet.location_id = twitter_location.ids()[0]
+                d['place_id'] = tweet.location_id
 
-        tweet.tweet_sent_at = datetime.now()
+        try:
+            if tweet.share_image_url:
+                fn, headers = urllib.urlretrieve(tweet.share_image_url)
+                d['filename'] = fn
+                print d
+                status = twitter_api.update_with_media(**d)
+            else:
+                print d
+                status = twitter_api.update_status(**d)
+        except tweepy.error.TweepError,e:
+            print e
+            sys.exit(-1)
+
+
+        tweet.tweet_sent_at = utcnow()
         tweet.tweet_sent = True
         tweet.tweet_id = status.id
         tweet.save()
