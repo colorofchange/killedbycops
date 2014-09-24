@@ -1,6 +1,11 @@
 AGENCY_ACRONYMS = {
   'New York Police Department':'NYPD',
-  'Police Department':'PD'
+  'Los Angeles Police Department': 'LAPD',
+  "Sheriff's Department":'Sheriffs',
+  'Sheriff Office':'Sheriffs',
+  "Sheriff's Office":'Sheriffs',
+  'Police Department':'PD',
+  'Police Deptartment': 'PD', #typo
 }
 
 # gross hack

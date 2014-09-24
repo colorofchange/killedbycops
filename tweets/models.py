@@ -16,6 +16,23 @@ class Tweet(models.Model):
   def __unicode__(self):
     return self.text
 
+  def num_chars(self):
+    return len(self.text)
+
+  def num_chars_tag(self):
+    n = len(self.text)
+    if self.share_image_url:
+      m = 120
+    else:
+      m = 140
+
+    if n > m:
+      return "<span style='color:red;'>%s</span>" % n
+    else:
+      return n
+  num_chars_tag.short_description = "# Chars"
+  num_chars_tag.allow_tags = True
+
   def image_tag(self):
     if self.share_image_url:
       return "<a href='%s' target='_blank'><img src=%s width='100'/></a>" % (self.share_image_url,self.share_image_url)

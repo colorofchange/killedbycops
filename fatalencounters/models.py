@@ -22,4 +22,5 @@ class FatalEncounter(models.Model):
       return "<img src=%s width='100'/>" % self.photo_url
     else:
       return ""
+  photo_tag.short_description = "Photo"
   photo_tag.allow_tags = True

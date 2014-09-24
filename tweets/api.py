@@ -1,9 +1,11 @@
-import tweepy, os
+import tweepy, os, sys
 
 if not os.environ.has_key('TWITTER_CONSUMER_KEY'):
-    print "no consumer key"
+    print "no TWITTER_CONSUMER_KEY"
+    sys.exit(-1)
 if not os.environ.has_key('TWITTER_CONSUMER_SECRET'):
-    print "no consumer secret"
+    print "no TWITTER_CONSUMER_SECRET"
+    sys.exit(-1)
 
 twitter_auth = tweepy.OAuthHandler(os.environ.get('TWITTER_CONSUMER_KEY'),
                                    os.environ.get('TWITTER_CONSUMER_SECRET'))

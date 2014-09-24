@@ -57,8 +57,7 @@ class Command(BaseCommand):
                     tweet = fe.tweet
                     print "overwriting existing tweet"
                 except Tweet.DoesNotExist:
-                    pass
-
+                    tweet = Tweet(fatal_encounter=fe)
             else:
                 tweet = Tweet(fatal_encounter=fe)
 
@@ -74,7 +73,14 @@ class Command(BaseCommand):
                 MAX_TWEET_LENGTH = 120
             if len(tweet.text) > MAX_TWEET_LENGTH:
                 print "ERROR: tweet text > MAX_TWEET_LENGTH"
+                print "OVER MAX", len(tweet.text)
+                print tweet.text
+
+            if len(tweet.text)+19 <= MAX_TWEET_LENGTH:
+                tweet.text = tweet.text + ' via @ColorOfChange'
             # use shorter template?
+
+            #tweet.text = tweet.text.replace('http://placeholder.url', 'http://colorofchange.org/sign/placeholder?source=killedbycops_twitter')
 
             if options['geocode']:
                 geolocator = GeoNames(username='jlevinger')
@@ -103,8 +109,7 @@ class Command(BaseCommand):
                     tweet.share_image_url = "https://killedbycops.s3.amazonaws.com/images/killedbycops-9_18-%s.png" % image_id
                 except KeyError:
                     print "unable to lookup", fe.name, "from IMAGE_ID_LOOKUP"
-                    continue
-
+                    
             tweet.save()
             fe.tweet = tweet
-            print "saved", tweet
+            #print "saved", tweet

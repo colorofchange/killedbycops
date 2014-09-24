@@ -1,1 +1,1 @@
-{{name|safe}} - {{age}}, killed by {{agency_responsible|safe}} on {{date_of_injury|date:"m/d/Y"}} #killedbycops http://colorofchange.org
+{{name|safe}} - {{age}}, killed by {{agency_responsible|safe}} on {{date_of_injury|date:"m/d/Y"}} #KilledByCops http://placeholder.url
