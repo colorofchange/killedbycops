@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 
 def home(request):
-  return HttpResponse('@KilledByCops')
+  return HttpResponseRedirect('http://act.colorofchange.org/sign/killedbycops_stw?source=killedbycops_home')

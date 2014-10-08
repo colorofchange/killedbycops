@@ -75,12 +75,12 @@ class Command(BaseCommand):
                 tweet.text = tweet.text + ' via @ColorOfChange'
             # use shorter template?
 
-            #tweet.text = tweet.text.replace('http://placeholder.url', 'http://colorofchange.org/sign/placeholder?source=killedbycops_twitter')
+            tweet.text = tweet.text.replace('http://placeholder.url', 'http://act.colorofchange.org/sign/killedbycops_stw?source=killedbycops_twitter')
                 
             if options['attach_image']:
                 try:
                     image_id = IMAGE_ID_LOOKUP[fe.name]
-                    tweet.share_image_url = "https://killedbycops.s3.amazonaws.com/images/killedbycops-9_18-%s.png" % image_id
+                    tweet.share_image_url = "https://killedbycops.s3.amazonaws.com/images/killedbycops-10_9-%s.png" % image_id
                 except KeyError:
                     print "unable to lookup", fe.name, "from IMAGE_ID_LOOKUP"
                     
