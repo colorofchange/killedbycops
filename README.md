@@ -15,7 +15,7 @@ Generate token and add to the environment:
 TWITTER_TOKEN_KEY, TWITTER_TOKEN_SECRET
 
 Generate tweets:
-> python manage.py generate_tweets --geocode --attach_image [--overwrite_existing]
+> python manage.py generate_tweets --attach_image [--overwrite_existing]
 
 Post one tweet an hour, using cron or Heroku delayed jobs:
-> python manage.py post_one_tweet
+> python manage.py post_one_tweet [--geocode]
