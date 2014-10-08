@@ -171,7 +171,7 @@ IMAGE_ID_LOOKUP = {
   "Aron Jones":157,
   "Brandon McCloud":158,
   "Icarus Randolph":159,
-  "Eric Gardner":160,
+  "Eric Garner":160,
   "Miriam Iris Carey":161,
   "Larry Eugene Jackson Jr.":162,
   "Dontre Hamilton":163,
