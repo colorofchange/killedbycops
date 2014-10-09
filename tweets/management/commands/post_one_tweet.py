@@ -22,7 +22,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         tweet = Tweet.objects.filter(tweet_sent=False).order_by('?')[0]
 
-        d = {'status': tweet.text}
+        d = {'status': tweet.text.replace('http://placeholder.url', 'http://act.colorofchange.org/sign/killedbycops_stw?source=killedbycops_twitter')}
 
         if options['geocode']:
             print "geocoding...",

@@ -1,12 +1,22 @@
 AGENCY_ACRONYMS = {
+  # geographic
   'New York Police Department':'NYPD',
   'Los Angeles Police Department': 'LAPD',
+  # turn into nouns
   "Sheriff's Department":'Sheriffs',
   'Sheriff Office':'Sheriffs',
   "Sheriff's Office":'Sheriffs',
+  "Sherrif's Department": 'Sheriffs',
+  "police officers": "officers",
+  # department specific
   'Police Department':'PD',
   'Police Deptartment': 'PD', #typo
-}
+  'State Police': 'SP',
+  "Drug Enforcement Administration": 'DEA Agents',
+  "Special Response Team": 'SWAT', #effectively equivalent
+  "uniformed Secret Service": "Secret Service", #too long, shorten
+  " and ": '&', #ampersands are cool
+  }
 
 # gross hack
 # but we need some way to link the sequential images with fatal encounters
