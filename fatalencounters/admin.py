@@ -9,7 +9,7 @@ class FatalEncounterAdmin(admin.ModelAdmin):
   fieldsets = [
     ('Biographical', {'fields': ['name','age','gender','race']}),
     ('Incident', {'fields': ['date_of_injury','city','state','agency_responsible']}),
-    ('Sources', {'fields': ['source_url','photo_url','uid']}),
+    ('Sources', {'fields': ['source_url','photo_url']}),
   ]
 
 admin.site.register(FatalEncounter, FatalEncounterAdmin)
