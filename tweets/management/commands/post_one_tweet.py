@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from optparse import make_option
+from django.core.mail import mail_admins
 from django.utils.timezone import now as utcnow
 
 import urllib
@@ -45,6 +46,11 @@ class Command(BaseCommand):
                 status = twitter_api.update_status(**d)
         except tweepy.error.TweepError,e:
             print e
+            mail_admins('error posting',"""
+                Error: %s
+                Tweet: %s
+                FatalEncounter: %s
+            """ % (e,tweet,tweet.fatal_encounter))
             sys.exit(-1)
 
 

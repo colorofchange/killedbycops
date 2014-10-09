@@ -28,6 +28,9 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = ['killedbycops.herokuapp.com','killedbycops.org']
 
 
+ADMINS = (('Josh Levinger','josh@spacedog.xyz'))
+EMAIL_SUBJECT_PREFIX = '[KilledByCops] '
+
 # Application definition
 
 INSTALLED_APPS = (
