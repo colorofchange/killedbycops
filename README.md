@@ -18,7 +18,7 @@ Generate token and add to the environment:
 > heroku config:add TWITTER_TOKEN_SECRET=  
 
 Load FatalEncounters data:
-> python manage.py update_fatal_encounters [--pull_from_web]
+> python manage.py update_fatal_encounters [--pull_from_web] [--last_proofed_row]
 
 Generate tweets:
 > python manage.py generate_tweets --attach_image [--overwrite_existing]

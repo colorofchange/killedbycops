@@ -33,7 +33,7 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        encounters = FatalEncounter.objects.all()
+        encounters = FatalEncounter.objects.filter(proofed=True)
 
         if options['only_black']:
             print "only black FatalEncounters"

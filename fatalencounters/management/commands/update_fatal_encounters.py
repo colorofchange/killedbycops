@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand
-from django.db.utils import DataError
 from optparse import make_option
 
 import urllib
@@ -25,7 +24,6 @@ class Command(BaseCommand):
             default=0,
             dest='last_proofed_row',
             help='Last from the spreadsheet that was proofed by editors'),
-
         )
 
     def handle(self, *args, **options):
@@ -36,7 +34,7 @@ class Command(BaseCommand):
             print 'Updated data/fatal-encounters.csv'
         else:
             if os.path.exists('data/fatal-encounters.csv'):
-                print 'Using existing data/fatal-encounters.csv'
+                print 'Using existing data/fatal-encounters.csv from', os.path.getmtime('data/fatal-encounters.csv')
             else:
                 print 'No existing data/fatal-encounters.csv'
                 print 'Try again with --pull_from_web'
@@ -45,7 +43,12 @@ class Command(BaseCommand):
         with open('data/fatal-encounters.csv') as csv_file:
             csv_reader = csv.reader(csv_file)
             header = csv_reader.next()
+            print 'Header:', header
+
+            row_num = 0
             for row in csv_reader:
+                row_num += 1
+                
                 try:
                     data = {'name':row[1].strip(), 'age':row[2], 'race':row[4],
                             'city':row[8], 'state':row[9][:2], 'agency_responsible':row[12],
@@ -55,8 +58,6 @@ class Command(BaseCommand):
                         data['proofed'] = True
                     else:
                         data['proofed'] = False
-
-
 
                     #convert Male/Female to single character
                     if len(row[3]) > 1:
