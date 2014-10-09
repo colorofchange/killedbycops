@@ -50,7 +50,7 @@ class Command(BaseCommand):
                 row_num += 1
                 
                 try:
-                    data = {'name':row[1].strip(), 'age':row[2], 'race':row[4],
+                    data = {'name':row[1].strip(), 'age':row[2], 'race':row[4].strip(),
                             'city':row[8], 'state':row[9][:2], 'agency_responsible':row[12],
                             'photo_url': row[5], 'source_url':row[16]}
 
