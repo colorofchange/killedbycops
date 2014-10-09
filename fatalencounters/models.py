@@ -12,7 +12,6 @@ class FatalEncounter(models.Model):
   state = models.CharField(max_length=2, null=True)
   agency_responsible = models.CharField(max_length=255, null=True)
   source_url = models.URLField(null=True, max_length=1000)
-  uid = models.CharField(max_length=10, unique=True)
 
   def __unicode__(self):
     return self.name

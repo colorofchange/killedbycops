@@ -19,6 +19,13 @@ class Command(BaseCommand):
             dest='pull_from_web',
             default=False,
             help='Download latest spreadsheet from FatalEncounters.org'),
+        make_option('--last_proofed_row',
+            action='store',
+            type="int",
+            default=0,
+            dest='last_proofed_row',
+            help='Last from the spreadsheet that was proofed by editors'),
+
         )
 
     def handle(self, *args, **options):
@@ -39,15 +46,21 @@ class Command(BaseCommand):
             csv_reader = csv.reader(csv_file)
             header = csv_reader.next()
             for row in csv_reader:
-                uid = row[21]
-                if not uid:
-                    print 'no uid, skipping'
-                    continue
-
                 try:
-                    data = {'name':row[1], 'age':row[2], 'gender': row[3][0], 'race':row[4],
+                    data = {'name':row[1].strip(), 'age':row[2], 'race':row[4],
                             'city':row[8], 'state':row[9][:2], 'agency_responsible':row[12],
                             'photo_url': row[5], 'source_url':row[16]}
+
+                    if options['last_proofed_row'] and row_num <= options['last_proofed_row']:
+                        data['proofed'] = True
+                    else:
+                        data['proofed'] = False
+
+
+
+                    #convert Male/Female to single character
+                    if len(row[3]) > 1:
+                        data['gender'] =  row[3][0]
 
                     #handle malformed dates
                     try:
@@ -74,12 +87,14 @@ class Command(BaseCommand):
                     if data['age'] == '':
                         data['age'] = None
 
-                    fe, created = FatalEncounter.objects.update_or_create(uid=uid, defaults=data)
+                    fe, created = FatalEncounter.objects.update_or_create(name=data['name'], defaults=data)
+
                     if created:
-                        print 'created #'+uid
+                        print 'row',row_num,'created',fe.name
                     else:
-                        print 'updated #'+uid
-                except (ValueError,DataError), e:
-                    print 'error saving #'+uid
+                        print 'row',row_num,'updated',fe.name
+                except Exception, e:
+                    print 'error saving #',row_num
                     print e
                     print row
+                    continue
