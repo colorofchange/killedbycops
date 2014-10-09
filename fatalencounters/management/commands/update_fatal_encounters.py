@@ -88,7 +88,8 @@ class Command(BaseCommand):
                     if data['age'] == '':
                         data['age'] = None
 
-                    fe, created = FatalEncounter.objects.update_or_create(name=data['name'], defaults=data)
+                    fe, created = FatalEncounter.objects.update_or_create(name=data['name'], age=data['age'], state=data['state'],
+                            defaults=data)
 
                     if created:
                         print 'row',row_num,'created',fe.name
