@@ -11,7 +11,7 @@ class Tweet(models.Model):
   location_id = models.CharField(max_length=16, blank=True, null=True, help_text="twitter location id")
   tweet_sent = models.BooleanField(default=False)
   tweet_sent_at = models.DateTimeField(blank=True, null=True)
-  tweet_id = models.IntegerField(blank=True, null=True)
+  tweet_id = models.BigIntegerField(blank=True, null=True)
 
   def __unicode__(self):
     return self.text
