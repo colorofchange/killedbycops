@@ -9,3 +9,4 @@ static3==0.5.1
 tweepy==2.3.0
 waitress==0.8.9
 wsgiref==0.1.2
+newrelic==2.32.0.28
