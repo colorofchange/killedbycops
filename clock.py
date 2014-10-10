@@ -1,14 +1,19 @@
-import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'killedbycops.settings'
-
+import subprocess
 from apscheduler.schedulers.blocking import BlockingScheduler
-from django.core.management import call_command
 
-sched = BlockingScheduler()
+def tweet_hourly():
+    print "tweet_hourly"
+    print subprocess.call(["python","manage.py","post_one_tweet"])
+    print "done"
 
-@sched.scheduled_job('cron', id='post_one_tweet', hour='*', minute='0')
-def timed_job():
-    call_command('post_one_tweet')
+if __name__ == '__main__':
+    scheduler = BlockingScheduler()
+    print "setup APScheduler.Blocking"
+    scheduler.add_job(tweet_hourly, 'cron', id='tweet_hourly', hour='*', minute='0')
 
-print "starting scheduler"
-sched.start()
+    try:
+        print "starting... control-C to quit"
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        print "scheduler quit"
+        pass
