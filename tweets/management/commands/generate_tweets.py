@@ -64,7 +64,7 @@ class Command(BaseCommand):
             if options['attach_image']:
                 try:
                     image_id = IMAGE_ID_LOOKUP[fe.name]
-                    tweet.share_image_url = "https://killedbycops.s3.amazonaws.com/images/killedbycops-10_9-%s.png" % image_id
+                    tweet.share_image_url = "https://killedbycops.s3.amazonaws.com/final/%s.jpg" % image_id
                     MAX_TWEET_LENGTH = 120
                 except KeyError:
                     print "unable to lookup", fe.name, "from IMAGE_ID_LOOKUP"
