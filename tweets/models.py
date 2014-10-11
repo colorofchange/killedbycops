@@ -39,3 +39,6 @@ class Tweet(models.Model):
     else:
       return ""
   image_tag.allow_tags = True
+
+  def text_replace_placeholder(self):
+    return self.text.replace('http://placeholder.url', 'http://act.colorofchange.org/sign/killedbycops_stw?source=killedbycops_twitter')

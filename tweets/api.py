@@ -1,4 +1,8 @@
-import tweepy, os, sys
+import os, sys
+from retrying import retry
+
+from geopy.geocoders import GeoNames
+import tweepy
 
 if not os.environ.has_key('TWITTER_CONSUMER_KEY'):
     print "no TWITTER_CONSUMER_KEY"
@@ -20,3 +24,21 @@ else:
                                   os.environ.get('TWITTER_TOKEN_SECRET'))
 
 twitter_api = tweepy.API(twitter_auth)
+
+def twitter_geocode(city, state):
+
+    @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
+    def geocode(string):
+      geolocator = GeoNames(username='jlevinger')
+      return geolocator.geocode(string)
+      
+    @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
+    def reverse_geocode(lat, lon):
+      try:
+        return twitter_api.reverse_geocode(lat, lon, granularity='city')
+      except tweepy.error.TweepError:
+        return False
+
+    location = geocode("%s, %s" % (city, state))
+    twitter_location = reverse_geocode(location.latitude, location.longitude)
+    return twitter_location.ids()[0]
