@@ -13,6 +13,7 @@ def random_tweet():
     # retry after 20 seconds, up to a maximum of 3 times
     @retry(retry_on_result=retval_is_nonzero, stop_max_attempt_number=3, wait_fixed=20000)
     def call_subprocess():
+        print "calling > python manage.py post_random_tweet"
         return subprocess.call(["python","manage.py","post_random_tweet"])
 
     call_subprocess()
