@@ -72,6 +72,14 @@ WSGI_APPLICATION = 'killedbycops.wsgi.application'
 import dj_database_url
 DATABASES = {'default': dj_database_url.config(default='sqlite:///db.sqlite3')}
 
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
