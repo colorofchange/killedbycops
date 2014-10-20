@@ -25,3 +25,25 @@ class FatalEncounter(models.Model):
       return ""
   photo_tag.short_description = "Photo"
   photo_tag.allow_tags = True
+
+  def county_fips(self):
+    try:
+      c = County.objects.get(state=self.state,name=self.county.replace('County','').strip()+" County")
+      return c.fips_code()
+    except County.DoesNotExist:
+      return None
+
+class County(models.Model):
+  state = models.CharField(max_length=2)
+  state_ansi = models.CharField(max_length=2)
+  county_ansi = models.CharField(max_length=3)
+  name = models.TextField(max_length=255)
+
+  def fips_code(self):
+    return "%s%s" % (self.state_ansi, self.county_ansi)
+
+  def __unicode__(self):
+    return self.name
+
+  class Meta:
+    verbose_name_plural = "counties"

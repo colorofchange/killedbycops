@@ -1,5 +1,5 @@
 from django.contrib import admin
-from fatalencounters.models import FatalEncounter
+from fatalencounters.models import FatalEncounter, County
 
 class FatalEncounterAdmin(admin.ModelAdmin):
   list_filter = ('gender', 'race', 'proofed')
@@ -12,4 +12,11 @@ class FatalEncounterAdmin(admin.ModelAdmin):
     ('Sources', {'fields': ['source_url','photo_url']}),
   ]
 
+class CountyAdmin(admin.ModelAdmin):
+  list_display = ('fips_code', 'name', 'state')
+  list_filter = ('state',)
+  search_fields = ('name',)
+
+
 admin.site.register(FatalEncounter, FatalEncounterAdmin)
+#admin.site.register(County, CountyAdmin)
