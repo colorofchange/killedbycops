@@ -9,6 +9,7 @@ v1_api.register(FatalEncounterResource())
 
 urlpatterns = patterns('',
     url(r'^$', 'killedbycops.views.home', name='home'),
+    url(r'^map/', 'map.views.map', name='map'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(v1_api.urls)),
 )

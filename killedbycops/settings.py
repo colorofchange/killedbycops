@@ -48,7 +48,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'tastypie',
     'fatalencounters',
-    'tweets'
+    'tweets',
+    'map'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -101,3 +102,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, "templates"),)
