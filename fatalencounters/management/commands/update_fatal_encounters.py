@@ -30,17 +30,17 @@ class Command(BaseCommand):
         if options['pull_from_web']:
             spreadsheet_url = "https://docs.google.com/spreadsheet/pub?key=0Aul9Ys3cd80fdHNuRG5VeWpfbnU4eVdIWTU3Q0xwSEE&output=csv"
             urlopener = urllib.URLopener()
-            urlopener.retrieve(spreadsheet_url, "data/fatal-encounters.csv")
+            urlopener.retrieve(spreadsheet_url, "fatalencounters/data/fatal-encounters.csv")
             print 'Updated data/fatal-encounters.csv'
         else:
-            if os.path.exists('data/fatal-encounters.csv'):
-                print 'Using existing data/fatal-encounters.csv from', os.path.getmtime('data/fatal-encounters.csv')
+            if os.path.exists('fatalencounters/data/fatal-encounters.csv'):
+                print 'Using existing data/fatal-encounters.csv from', os.path.getmtime('fatalencounters/data/fatal-encounters.csv')
             else:
                 print 'No existing data/fatal-encounters.csv'
                 print 'Try again with --pull_from_web'
                 sys.exist()
 
-        with open('data/fatal-encounters.csv') as csv_file:
+        with open('fatalencounters/data/fatal-encounters.csv') as csv_file:
             csv_reader = csv.reader(csv_file)
             header = csv_reader.next()
             print 'Header:', header
@@ -87,6 +87,10 @@ class Command(BaseCommand):
                         data['age'] = filter(str.isdigit, data['age'])
                     if data['age'] == '':
                         data['age'] = None
+
+                    #cleanup county names
+                    county = row[11]
+                    data['county'] = county.replace('County','').strip()
 
                     fe, created = FatalEncounter.objects.update_or_create(name=data['name'], age=data['age'], state=data['state'],
                             defaults=data)

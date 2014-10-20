@@ -9,6 +9,7 @@ class FatalEncounter(models.Model):
   photo_url = models.URLField(blank=True, null=True, max_length=1000)
   date_of_injury = models.DateField(null=True)
   city = models.CharField(max_length=255, null=True)
+  county = models.CharField(max_length=255, null=True)
   state = models.CharField(max_length=2, null=True)
   agency_responsible = models.CharField(max_length=255, null=True)
   source_url = models.URLField(null=True, max_length=1000)
