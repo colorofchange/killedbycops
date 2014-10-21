@@ -24,8 +24,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_string(50, "abcdefghijklmno
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ['killedbycops.herokuapp.com','killedbycops.org']
-
+ALLOWED_HOSTS = ('killedbycops.herokuapp.com', '*.killedbycops.org', 'localhost')
 
 ADMINS = (('Josh Levinger','josh@spacedog.xyz'))
 EMAIL_SUBJECT_PREFIX = '[KilledByCops] '
@@ -99,6 +98,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, "templates"),)
 
