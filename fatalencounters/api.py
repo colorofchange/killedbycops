@@ -4,6 +4,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.cache import SimpleCache
 
 from fatalencounters.models import FatalEncounter
+from fatalencounters.serializers import PrettyJSONSerializer
 
 
 class FatalEncounterResource(ModelResource):
@@ -27,3 +28,4 @@ class FatalEncounterResource(ModelResource):
         }
 
         cache = SimpleCache(timeout=10)
+        serializer = PrettyJSONSerializer()

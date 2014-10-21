@@ -1,13 +1,20 @@
 all: static
 
-static: us.json
+#copy to static directory
+static: us.json fatalencounters.json
+	cp fatalencounters.json ../static/data/fatalencounters.json
 	cp us.json ../static/data/us.json
 
 clean:
-	rm -rf -- us.json build
+	rm -rf -- *.json build
 
 .PHONY: all clean
 
+#copy files from API
+fatalencounters.json:
+	curl -o fatalencounters.json 'http://localhost:8000/api/v1/fatalencounters/?format=json&limit=0' 
+
+#US Census shapefiles
 build/gz_2010_us_050_00_20m.shp: build/gz_2010_us_050_00_20m.zip
 	unzip -od $(dir $@) $<
 	touch $@
