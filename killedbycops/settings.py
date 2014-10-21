@@ -24,7 +24,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_string(50, "abcdefghijklmno
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ('killedbycops.herokuapp.com', '*.killedbycops.org', 'localhost')
+ALLOWED_HOSTS = ['*']
 
 ADMINS = (('Josh Levinger','josh@spacedog.xyz'))
 EMAIL_SUBJECT_PREFIX = '[KilledByCops] '
