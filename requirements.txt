@@ -21,4 +21,5 @@ static3==0.5.1
 tweepy==2.3.0
 tzlocal==1.1.1
 waitress==0.8.9
+whitenoise==1.0.3
 wsgiref==0.1.2
