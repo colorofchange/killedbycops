@@ -1,4 +1,15 @@
+#wrapper_inner {
+  width: 990px !important;
+  box-sizing:border-box;
+}
+
+.map_wrapper { 
+  background-color: #fff;
+  padding: 20px 15px;
+}
+
 #map {
+  display: block;
   width: 960;
   height: 600;
 }

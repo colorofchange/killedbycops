@@ -2,6 +2,7 @@
 {% load static from staticfiles %}
 
 {%block styles%}
+<link rel="stylesheet" href="//s3.amazonaws.com/s3.colorofchange.org/ak-media/stw.css" type="text/css" />
 <link rel="stylesheet" href="{% static 'css/map.css'%}" type="text/css">
 {%endblock%}
 
@@ -201,7 +202,9 @@ d3.select(self.frameElement).style("height", height + "px");
 {%endblock%}
 
 {%block content%}
-<h1>KilledByCops Map</h1>
-<div id="map"></div>
-<p>Data from FatalEncounters.org</p>
+<div class="map_wrapper">
+  <h1>KilledByCops Map</h1>
+  <div id="map"></div>
+  <p>Data from FatalEncounters.org</p>
+</div>
 {%endblock%}
