@@ -5,13 +5,11 @@
 <link rel="stylesheet" href="{% static 'css/map.css'%}" type="text/css">
 {%endblock%}
 
-{%block body%}
+{%block scripts%}
 <script src="{% static 'js/underscore.min.js' %}"></script>
 <script src="{% static 'js/d3.js' %}"></script>
 <script src="{% static 'js/topojson.v1.min.js' %}"></script>
 <script src="{% static 'js/queue.v1.min.js' %}"></script>
-
-<h1>KilledByCops</h1>
 
 <script>
 
@@ -20,26 +18,34 @@ var width = 960,
     active = d3.select(null);
 
 var formatNumber = d3.format(",.0f");
+var formatPercent = d3.format(".1%");
 
+// topojson is already projected, display as-is
+var path = d3.geo.path()
+    .projection(null);
+
+// radius of county bubbles is scaled on sqrt, for area comparisons
+var radius = d3.scale.sqrt()
+    .domain([0, 15])
+    .range([0, 15]);
+
+// pie charts 
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) { return d.population; });
+
+// main svg object
+var svg = d3.select("#map").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .on("click", stopped, true);
+
+// zoom behavior
 var zoom = d3.behavior.zoom()
     .translate([0, 0])
     .scale(1)
     .scaleExtent([1, 8])
     .on("zoom", zoomed);
-
-var path = d3.geo.path()
-    .projection(null);
-    //topojson is already projected, display as-is
-
-var radius = d3.scale.sqrt()
-    .domain([0, 15])
-    .range([0, 15]);
-
-// main svg object
-var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .on("click", stopped, true);
 
 // background rect to allow reset
 svg.append("rect")
@@ -48,9 +54,9 @@ svg.append("rect")
     .attr("height", height)
     .on("click", reset);
 
+// main svg group
 var g = svg.append("g")
     .style("stroke-width", "1.5px");
-
 
 svg
     //.call(zoom) // allow free zooming
@@ -170,6 +176,7 @@ function drawMap(error, us, fatalencounters) {
       })
       .on("click", function(d) {
         console.log('clicked',d);
+        d3.select(this)
       })
     .append("title")
       .text(function(d) {
@@ -177,6 +184,12 @@ function drawMap(error, us, fatalencounters) {
             + "\nPopulation " + formatNumber(d.properties.population);
         if (d.properties.fatalencounters) {
           text += "\nFatal Encounters " + formatNumber(d.properties.fatalencounters.total);
+          if (d.properties.fatalencounters.by_race['African-American/Black'] !== undefined) {
+            pct_black = d.properties.fatalencounters.by_race['African-American/Black'] /
+                          d.properties.fatalencounters.total;
+            console.log(pct_black);
+            text += "\n\t" + formatPercent(pct_black) + " black";
+          }
         }
         return text;
       });
@@ -185,7 +198,10 @@ function drawMap(error, us, fatalencounters) {
 d3.select(self.frameElement).style("height", height + "px");
 
 </script>
+{%endblock%}
 
+{%block content%}
+<h1>KilledByCops Map</h1>
+<div id="map"></div>
 <p>Data from FatalEncounters.org</p>
-
 {%endblock%}

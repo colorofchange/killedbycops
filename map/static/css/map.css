@@ -1,5 +1,10 @@
+#map {
+  width: 960;
+  height: 600;
+}
+
 .background {
-  fill: none;
+  fill: #fff;
   pointer-events: all;
   stroke: #000;
 }
