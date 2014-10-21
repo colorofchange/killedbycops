@@ -165,15 +165,11 @@ function drawMap(error, us, fatalencounters) {
           return "";
         }
       })
-      .attr("r", function(d) { 
-        if (d.properties.fatalencounters) {
-          return radius(d.properties.fatalencounters.total);
-        } else {
-          return radius(0);
-        }
+      .attr("r", function(d) {
+        return d.properties.fatalencounters ? radius(d.properties.fatalencounters.total) : radius(0);
       })
       .style("visibility", function(d) {
-        return d.properties.fatalencounters === undefined ? "hidden" : "visible";
+        return d.properties.fatalencounters ? "visible" : "hidden";
       })
       .on("click", function(d) {
         console.log('clicked',d);
@@ -184,12 +180,12 @@ function drawMap(error, us, fatalencounters) {
         var text = d.properties.name
             + "\nPopulation " + formatNumber(d.properties.population);
         if (d.properties.fatalencounters) {
-          text += "\nFatal Encounters " + formatNumber(d.properties.fatalencounters.total);
+          text += "\n" + formatNumber(d.properties.fatalencounters.total) + " killed by cops";
           if (d.properties.fatalencounters.by_race['African-American/Black'] !== undefined) {
             pct_black = d.properties.fatalencounters.by_race['African-American/Black'] /
                           d.properties.fatalencounters.total;
             console.log(pct_black);
-            text += "\n\t" + formatPercent(pct_black) + " black";
+            text += "\n- " + formatPercent(pct_black) + " black";
           }
         }
         return text;
@@ -205,6 +201,11 @@ d3.select(self.frameElement).style("height", height + "px");
 <div class="map_wrapper">
   <h1>KilledByCops Map</h1>
   <div id="map"></div>
-  <p>Data from FatalEncounters.org</p>
+  <ul id="sources">
+    <li>Information from 2000-2014 news reports collected by <a href="http://www.fatalencounters.org">FatalEncounters.org</a></li>
+    <li>Population figures from <a href="http://factfinder2.census.gov">US Census</a>, 2012 American Community Survey
+    <li>Conduct of Law Enforcement cases <a href="http://www.justice.gov/crt/about/spl/findsettle.php">Department of Justice</a>
+    <li>Mapping and data analysis by <a href="http://colorofchange.org">ColorOfChange.org</a></li>
+  </ul>
 </div>
 {%endblock%}

@@ -8,6 +8,12 @@
   padding: 20px 15px;
 }
 
+.map_wrapper ul#sources {
+  margin-left: 20px;
+  padding-left: 0px;
+  list-style-type: circle;
+}
+
 #map {
   display: block;
   width: 960;
