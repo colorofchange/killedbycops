@@ -3,7 +3,7 @@ from fatalencounters.models import FatalEncounter, County
 
 class FatalEncounterAdmin(admin.ModelAdmin):
   list_filter = ('gender', 'race', 'proofed')
-  list_display = ('name', 'age', 'county', 'race', 'date_of_injury', 'photo_tag')
+  list_display = ('name', 'age', 'city', 'county', 'state', 'race', 'date_of_injury', 'photo_tag')
   search_fields = ('name','city','county','state')
   date_hierarchy = 'date_of_injury'
   fieldsets = [
@@ -19,4 +19,4 @@ class CountyAdmin(admin.ModelAdmin):
 
 
 admin.site.register(FatalEncounter, FatalEncounterAdmin)
-#admin.site.register(County, CountyAdmin)
+admin.site.register(County, CountyAdmin)

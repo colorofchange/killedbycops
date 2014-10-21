@@ -27,20 +27,38 @@ class FatalEncounter(models.Model):
   photo_tag.allow_tags = True
 
   def county_fips(self):
+    cleaned_name = self.county
+
+    #remove 'county' for lookup
     for n in COUNTY_NAME_TYPES:
-      cleaned_name = self.county.replace(n,'')
+      cleaned_name = cleaned_name.replace(n,'')
+
+    #common abbreviations
+    cleaned_name = cleaned_name.replace('Saint ','St. ')
+
+    state = self.state.upper()
     try:
-      c = County.objects.get(state=self.state,name__startswith=cleaned_name)
+      c = County.objects.get(state=state,name__startswith=cleaned_name)
       return c.fips_code()
     except County.DoesNotExist:
       return None
     except County.MultipleObjectsReturned:
-      try:
-        #try exact match
-        c = County.objects.get(state=self.state,name=cleaned_name)
-        return c.fips_code()
-      except County.DoesNotExist:
-        return "no exact match"
+      # starts with is too broad
+      # try to find exact match
+      found = False
+      for n in COUNTY_NAME_TYPES:
+        try:
+          c = County.objects.get(state=state,name__iexact=cleaned_name+' '+n)
+          found = True
+          return c.fips_code()
+        except County.DoesNotExist:
+          found = False
+          continue
+
+      if not found:
+        # no exact match
+        # do manual reconciliation?
+        return None
     return None
 
 COUNTY_NAME_TYPES = ('County', 'Parish', 'Borough', 'Census Area', 'Municipality')
