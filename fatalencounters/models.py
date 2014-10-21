@@ -27,11 +27,23 @@ class FatalEncounter(models.Model):
   photo_tag.allow_tags = True
 
   def county_fips(self):
+    for n in COUNTY_NAME_TYPES:
+      cleaned_name = self.county.replace(n,'')
     try:
-      c = County.objects.get(state=self.state,name=self.county.replace('County','').strip()+" County")
+      c = County.objects.get(state=self.state,name__startswith=cleaned_name)
       return c.fips_code()
     except County.DoesNotExist:
       return None
+    except County.MultipleObjectsReturned:
+      try:
+        #try exact match
+        c = County.objects.get(state=self.state,name=cleaned_name)
+        return c.fips_code()
+      except County.DoesNotExist:
+        return "no exact match"
+    return None
+
+COUNTY_NAME_TYPES = ('County', 'Parish', 'Borough', 'Census Area', 'Municipality')
 
 class County(models.Model):
   state = models.CharField(max_length=2)
