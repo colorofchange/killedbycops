@@ -16,46 +16,94 @@
 <script>
 
 var width = 960,
-    height = 600;
+    height = 600,
+    active = d3.select(null);
 
 var formatNumber = d3.format(",.0f");
 
+var zoom = d3.behavior.zoom()
+    .translate([0, 0])
+    .scale(1)
+    .scaleExtent([1, 8])
+    .on("zoom", zoomed);
+
 var path = d3.geo.path()
     .projection(null);
+    //topojson is already projected, display as-is
 
 var radius = d3.scale.sqrt()
     .domain([0, 15])
     .range([0, 15]);
 
+// main svg object
 var svg = d3.select("body").append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .on("click", stopped, true);
 
-// var legend = svg.append("g")
-//     .attr("class", "legend")
-//     .attr("transform", "translate(" + (width - 50) + "," + (height - 20) + ")")
-//   .selectAll("g")
-//     .data([1e6, 5e6, 1e7])
-//   .enter().append("g");
+// background rect to allow reset
+svg.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height)
+    .on("click", reset);
 
-// legend.append("circle")
-//     .attr("cy", function(d) { return -radius(d); })
-//     .attr("r", radius);
+var g = svg.append("g")
+    .style("stroke-width", "1.5px");
 
-// legend.append("text")
-//     .attr("y", function(d) { return -2 * radius(d); })
-//     .attr("dy", "1.3em")
-//     .text(d3.format(".1s"));
 
+svg
+    //.call(zoom) // allow free zooming
+    .call(zoom.event);
+
+// load data files asynchronously
 queue()
     .defer(d3.json, "{% static 'data/us.json' %}")
     .defer(d3.json, "{% static 'data/fatalencounters.json' %}") //live data at /api/v1/fatalencounters/?format=json&limit=0
-    .await(ready);
+    .await(drawMap);
 
-function ready(error, us, fatalencounters) {
+function clicked(d) {
+  if (active.node() === this) return reset();
+  active.classed("active", false);
+  active = d3.select(this).classed("active", true);
+
+  var bounds = path.bounds(d),
+      dx = bounds[1][0] - bounds[0][0],
+      dy = bounds[1][1] - bounds[0][1],
+      x = (bounds[0][0] + bounds[1][0]) / 2,
+      y = (bounds[0][1] + bounds[1][1]) / 2,
+      scale = .9 / Math.max(dx / width, dy / height),
+      translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+  svg.transition()
+      .duration(750)
+      .call(zoom.translate(translate).scale(scale).event);
+}
+
+function reset() {
+  active.classed("active", false);
+  active = d3.select(null);
+
+  svg.transition()
+      .duration(1000)
+      .call(zoom.translate([0, 0]).scale(1).event);
+}
+
+function zoomed() {
+  g.style("stroke-width", 1.5 / d3.event.scale + "px");
+  g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+}
+
+// If the drag behavior prevents the default click,
+// also stop propagation so we don’t click-to-zoom.
+function stopped() {
+  if (d3.event.defaultPrevented) d3.event.stopPropagation();
+}
+
+function drawMap(error, us, fatalencounters) {
   if (error) return console.error(error);
 
-  // take the fatalencounters data, rollup counts by race
+  // take the fatalencounters data, rollup counties by race
   var fe_race_rollup = d3.nest()
     .key(function(d) { return d.county_fips; })
     .key(function(d) { return d.race; })
@@ -64,10 +112,8 @@ function ready(error, us, fatalencounters) {
 
   // pull us_counties features from topojson
   us_counties = topojson.feature(us, us.objects.counties).features;
-   //.sort(function(a, b) { return b.properties.population - a.properties.population; };
 
   // merge fatalencounters with us_counties
-  // 
   fe_by_county = _.map(us_counties, function(county) {
     fe_in_county = _.find(fe_race_rollup, function(c) { return c.key === county.id } );
     if (fe_in_county) {
@@ -83,28 +129,47 @@ function ready(error, us, fatalencounters) {
     return county;
   });
 
-  svg.append("path")
-      .datum(topojson.feature(us, us.objects.nation))
-      .attr("class", "land")
-      .attr("d", path);
+  // g.append("path")
+  //     .datum(topojson.feature(us, us.objects.nation))
+  //     .attr("class", "state")
+  //     .attr("d", path);
 
-  svg.append("path")
+  g.selectAll("path")
+      .data(topojson.feature(us, us.objects.states).features)
+    .enter().append("path")
+      .attr("d", path)
+      .attr("class", "state")
+      .on("click", clicked);
+
+  g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "border border--state")
       .attr("d", path);
 
-  svg.append("g")
-      .attr("class", "bubble")
+  g.append("g")
+      .attr("class","bubble")
     .selectAll("circle")
       .data(fe_by_county)
     .enter().append("circle")
-      .attr("transform", function(d) { return "translate(" + path.centroid(d) + ")"; })
+      .attr("transform", function(d) {
+        if (d.geometry) {
+          return "translate(" + path.centroid(d) + ")";
+        } else {
+          return "";
+        }
+      })
       .attr("r", function(d) { 
         if (d.properties.fatalencounters) {
           return radius(d.properties.fatalencounters.total);
         } else {
           return radius(0);
         }
+      })
+      .style("visibility", function(d) {
+        return d.properties.fatalencounters === undefined ? "hidden" : "visible";
+      })
+      .on("click", function(d) {
+        console.log('clicked',d);
       })
     .append("title")
       .text(function(d) {
