@@ -26,7 +26,7 @@ TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-ADMINS = (('Josh Levinger','josh@spacedog.xyz'))
+ADMINS = (('Josh Levinger','josh@levinger.net'),)
 EMAIL_SUBJECT_PREFIX = '[KilledByCops] '
 
 EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']

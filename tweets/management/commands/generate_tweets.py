@@ -12,7 +12,7 @@ from tweets.lookup import AGENCY_ACRONYMS, IMAGE_ID_LOOKUP
 MAX_TWEET_LENGTH = 140
 
 class Command(BaseCommand):
-    args = '--only_black --geocode --attach_image --overwrite_existing'
+    args = '--only_black --attach_image --overwrite_existing'
     help = 'Generates tweets for FatalEncounters, in order'
 
     option_list = BaseCommand.option_list + (
