@@ -25,7 +25,8 @@ var mapWidth = 640,
     dataHeight = 480,
     active = d3.select(null),
     dataTemplate,
-    feNational, feNationalTotal, popNational;
+    feNational, feNationalTotal, popNational,
+    usMap;
 
 var formatNumber = d3.format(",.0f");
 var formatPercent = d3.format(".1%");
@@ -55,14 +56,14 @@ var zoom = d3.behavior.zoom()
     .translate([0, 0])
     .scale(1)
     .scaleExtent([1, 8])
-    .on("zoom", zoomed);
+    .on("zoom", zoomFunction);
 
 // background rect to allow reset
 mapSvg.append("rect")
     .attr("class", "background")
     .attr("width", mapWidth)
     .attr("height", mapHeight)
-    .on("click", reset);
+    .on("click", resetZoom);
 
 // main svg group
 var mainGroup = mapSvg.append("g")
@@ -80,12 +81,18 @@ dataSvg = d3.select("#data").append("svg")
 var dataGroup = dataSvg.append("g")
     .style("stroke-width", "1.5px");
 
-function clicked(d) {
-  if (active.node() === this) return reset();
+function clickedState(d) {
+  if (active.node() === this) { return resetZoom(); }
+
   active.classed("active", false);
   active = d3.select(this).classed("active", true);
 
-  var bounds = path.bounds(d),
+  zoomToState(d);
+  $('select[name="states"]').val(Number(d.id));
+}
+
+function zoomToState(d) {
+    var bounds = path.bounds(d),
       dx = bounds[1][0] - bounds[0][0],
       dy = bounds[1][1] - bounds[0][1],
       x = (bounds[0][0] + bounds[1][0]) / 2,
@@ -98,22 +105,22 @@ function clicked(d) {
       .call(zoom.translate(translate).scale(scale).event);
 }
 
-function reset() {
+function resetZoom() {
   active.classed("active", false);
   active = d3.select(null);
 
   mapSvg.transition()
       .duration(1000)
       .call(zoom.translate([0, 0]).scale(1).event);
+
+  $('select[name="states"]').val(-1);
 }
 
-function zoomed() {
+function zoomFunction() {
   mainGroup.style("stroke-width", 1.5 / d3.event.scale + "px");
   mainGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
 
-// If the drag behavior prevents the default click,
-// also stop propagation so we don’t click-to-zoom.
 function stopped() {
   if (d3.event.defaultPrevented) d3.event.stopPropagation();
 }
@@ -127,6 +134,7 @@ queue()
 
 function mergeData(error, us, fatalencounters, dojFocus) {
   if (error) return console.error(error);
+  usMap = us;
 
   // rollup national numbers
   feNational = d3.nest()
@@ -144,7 +152,7 @@ function mergeData(error, us, fatalencounters, dojFocus) {
     .entries(fatalencounters.objects);
 
   // pull usCounties features from topojson
-  usCounties = topojson.feature(us, us.objects.counties).features;
+  var usCounties = topojson.feature(us, us.objects.counties).features;
 
   // merge FatalEncounters with usCounties
   feByCounty = _.map(usCounties, function(county) {
@@ -173,7 +181,7 @@ function drawMap(us, feByCounty) {
     .enter().append("path")
       .attr("d", path)
       .attr("class", "state")
-      .on("click", clicked); // zoom when clicked
+      .on("click", clickedState); // zoom when clicked
 
   // draw state borders
   mainGroup.append("path")
@@ -252,6 +260,23 @@ $(document).ready(function() {
 
   // compile template
   dataTemplate = _.template($('script#data-template').html());
+
+  $('select[name="states"]').on('change', function() {
+    var val = $('select[name="states"]').val();
+    if (val !== -1) {
+        var state = _.find(mainGroup.selectAll("path").data(), function(d) { return Number(d.id) == val; });
+
+        active.classed("active", false);
+        //active = d3.select(state).classed("active", true);
+
+        zoomToState(state);
+    } else {
+      //active = d3.select(null);
+      //resetZoom();
+      $('rect.background').click();
+    }
+
+  });
 });
 
 </script>
@@ -275,6 +300,13 @@ $(document).ready(function() {
   <div id="data">
     <div id="inner-data"></div>
   </div>
+  <em>Click or select a state to zoom in</em>
+  <select name="states">
+    <option value="-1"></option>
+    {% for code in STATE_CODES %}
+      <option value="{{code.1}}">{{code.0}}</option>
+    {%endfor%}
+  </select>
   <p>
     The Killed By Cops map is a project of ColorOfChange.org with data from FatalEncounters.org developed to visualize the crisis of violent policing and to call attention to the lack of a comprehensive, publicly-accessible, national database that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ, meaning that the dataset is largely incomplete and the lack of heated bubble areas is as result of the lack of available data and not because these areas are exempt from the epidemic of police violence and killings.
   </p>
