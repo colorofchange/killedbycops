@@ -1,3 +1,6 @@
+{% load static from staticfiles %}
+{% load compress %}
+
 <!DOCTYPE html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -16,9 +19,9 @@
   <meta property="og:title" content="Follow @KilledByCops. In memory of those killed by law enforcement. Let's stop killer cops and address the nationwide crisis of police violence.">
   <meta property="og:description" content="https://s3.amazonaws.com/s3.colorofchange.org/images/killedbycops-stw.png">
 
-  <link rel="stylesheet" href="https://s3.amazonaws.com/s3.colorofchange.org/ak-media/coc_actionkit.css?v=2" type="text/css">
-  <!--[if lt IE 9]><link rel="stylesheet" href="https://s3.amazonaws.com/s3.colorofchange.org/ak-media/coc_actionkit_ie8.css" type="text/css" /><![endif]-->
-  <link rel="stylesheet" href="//s3.amazonaws.com/cel_center/signup_popup/signup_popup.css" type="text/css">
+  {% compress css %}
+  <link rel="stylesheet" href="{% static 'css/coc_actionkit.css' %}" type="text/css">
+  {% endcompress %}
 
   {%block styles%}{%endblock%}
 
