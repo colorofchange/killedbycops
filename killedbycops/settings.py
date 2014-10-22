@@ -108,6 +108,9 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+COMPRESS_ENABLED = False
+#TODO, figure out compress and heroku
+
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, "templates"),)
 
 try:
