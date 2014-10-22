@@ -35,6 +35,11 @@
   border: 0.5px solid black;
 }
 
+#data h2 {
+  text-align:center;
+  font-size: 28px;
+}
+
 .background {
   fill: #fff;
   pointer-events: all;

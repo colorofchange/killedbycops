@@ -23,7 +23,9 @@ var mapWidth = 640,
     mapHeight = 480,
     dataWidth = 250,
     dataHeight = 480,
-    active = d3.select(null);
+    active = d3.select(null),
+    dataTemplate,
+    feNational, feNationalTotal, popNational;
 
 var formatNumber = d3.format(",.0f");
 var formatPercent = d3.format(".1%");
@@ -68,7 +70,8 @@ var mainGroup = mapSvg.append("g")
 
 mapSvg
     //.call(zoom) // allow free zooming
-    .call(zoom.event);
+    .call(zoom.event)
+    .on('mouseout', initialData);
 
 dataSvg = d3.select("#data").append("svg")
   .attr("width", dataWidth)
@@ -125,7 +128,15 @@ queue()
 function mergeData(error, us, fatalencounters, dojFocus) {
   if (error) return console.error(error);
 
-  // take the fatalencounters data, rollup counties by race
+  // rollup national numbers
+  feNational = d3.nest()
+    .key(function(d) { return d.race; })
+    .rollup(function(l) { return l.length; })
+    .entries(fatalencounters.objects);
+  feNationalTotal = d3.sum(feNational, function(d) { return d.values; });
+  popNational = d3.sum(us.objects.counties.geometries, function(d) { return d.properties.population; });
+
+  // rollup counties by race
   var feRaceRollup = d3.nest()
     .key(function(d) { return d.county_fips; })
     .key(function(d) { return d.race; })
@@ -190,7 +201,6 @@ function drawMap(us, feByCounty) {
         return d.properties.fatalencounters ? "visible" : "hidden";
       })
       .on("mouseover", updateData)
-      .on("mouseout", clearData)
     /*.append("title")
       .text(function(d) {
         var text = d.properties.name
@@ -205,20 +215,27 @@ function drawMap(us, feByCounty) {
         }
         return text;
       });*/
+
+  initialData();
 }
 
-// set up underscore to do mustache-style templates
-_.templateSettings = {
-  interpolate: /\{\{(.+?)\}\}/g
-};
-
-// compile template
-var dataTemplate = _.template($('script#data-template').html());
+function initialData() {
+  // show national numbers
+  $('#inner-data').html(dataTemplate({
+    name: "Killed by Cops 2000-2014",
+    population: formatNumber(popNational),
+    fatalencounters: {total: "over "+formatNumber(feNationalTotal)}
+  }));
+}
 
 function updateData() {
-  var data = d3.select(this)[0];
-  console.log('update',data);
-  $('#inner-data').html(dataTemplate(data.properties));
+  var data = d3.select(this).data()[0];
+  console.log('update',data.properties);
+  formatted_data = _.extend({}, data.properties,
+    { population: formatNumber(data.properties.population),
+      total: formatNumber(data.properties.fatalencounters.total),
+    });
+  $('#inner-data').html(dataTemplate(formatted_data));
 }
 
 function clearData() {
@@ -227,14 +244,26 @@ function clearData() {
 
 d3.select(self.frameElement).style("height", mapHeight + "px");
 
+$(document).ready(function() {
+    // set up underscore to do mustache-style templates
+  _.templateSettings = {
+    interpolate: /\{\{(.+?)\}\}/g
+  };
+
+  // compile template
+  dataTemplate = _.template($('script#data-template').html());
+});
+
 </script>
 
 <script type = "text/template" id="data-template">
+{% verbatim %}
 <h2>{{name}}</h2>
 <ul>
   <li>Population: {{population}}</li>
   <li>Killed by Cops: {{fatalencounters.total}}</li>
 </ul>
+{% endverbatim %}
 </script>
 {%endblock%}
 
