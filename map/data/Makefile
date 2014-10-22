@@ -1,9 +1,10 @@
 all: static
 
 #copy to static directory
-static: us.json fatalencounters.json
+static: us.json fatalencounters.json doj_focus.csv
 	cp fatalencounters.json ../static/data/fatalencounters.json
 	cp us.json ../static/data/us.json
+	cp doj_focus.csv ../static/data/doj_focus.csv
 
 clean:
 	rm -rf -- *.json build
@@ -13,6 +14,10 @@ clean:
 #copy files from API
 fatalencounters.json:
 	curl -o fatalencounters.json 'http://localhost:8000/api/v1/fatalencounters/?format=json&limit=0' 
+
+#and from google spreadsheet
+doj_focus.csv:
+	curl -o doj_focus.csv 'https://docs.google.com/spreadsheets/d/15pagGIf7Lc0-wE98jhcMB9bliTDvQD31eeVDzKQEOzg/pub?output=csv'
 
 #US Census shapefiles
 build/gz_2010_us_050_00_20m.shp: build/gz_2010_us_050_00_20m.zip
@@ -29,8 +34,8 @@ build/counties.json: build/gz_2010_us_050_00_20m.shp ACS_12_5YR_B01003.csv
 		--id-property='STATE+COUNTY,Id2' \
 		--external-properties=ACS_12_5YR_B01003.csv \
 		--properties='name=Geography,population=+d.properties["Estimate; Total"]' \
-		--projection='width = 960, height = 600, d3.geo.albersUsa() \
-			.scale(1280) \
+		--projection='width = 800, height = 600, d3.geo.albersUsa() \
+			.scale(800) \
 			.translate([width / 2, height / 2])' \
 		--simplify=.5 \
 		--filter=none \
