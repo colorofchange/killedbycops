@@ -34,8 +34,8 @@ build/counties.json: build/gz_2010_us_050_00_20m.shp ACS_12_5YR_B01003.csv
 		--id-property='STATE+COUNTY,Id2' \
 		--external-properties=ACS_12_5YR_B01003.csv \
 		--properties='name=Geography,population=+d.properties["Estimate; Total"]' \
-		--projection='width = 800, height = 600, d3.geo.albersUsa() \
-			.scale(800) \
+		--projection='width = 640, height = 480, d3.geo.albersUsa() \
+			.scale(854) \
 			.translate([width / 2, height / 2])' \
 		--simplify=.5 \
 		--filter=none \

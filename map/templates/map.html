@@ -7,15 +7,17 @@
 {%endblock%}
 
 {%block scripts%}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 <script src="{% static 'js/underscore.min.js' %}"></script>
 <script src="{% static 'js/d3.js' %}"></script>
 <script src="{% static 'js/topojson.v1.min.js' %}"></script>
 <script src="{% static 'js/queue.v1.min.js' %}"></script>
 
 <script>
-
-var width = 960,
-    height = 600,
+var mapWidth = 640,
+    mapHeight = 480,
+    dataWidth = 250,
+    dataHeight = 480,
     active = d3.select(null);
 
 var formatNumber = d3.format(",.0f");
@@ -36,9 +38,9 @@ var pie = d3.layout.pie()
     .value(function(d) { return d.population; });
 
 // main svg object
-var svg = d3.select("#map").append("svg")
-    .attr("width", width)
-    .attr("height", height)
+var mapSvg = d3.select("#map").append("svg")
+    .attr("width", mapWidth)
+    .attr("height", mapHeight)
     .on("click", stopped, true);
 
 // zoom behavior
@@ -49,19 +51,26 @@ var zoom = d3.behavior.zoom()
     .on("zoom", zoomed);
 
 // background rect to allow reset
-svg.append("rect")
+mapSvg.append("rect")
     .attr("class", "background")
-    .attr("width", width)
-    .attr("height", height)
+    .attr("width", mapWidth)
+    .attr("height", mapHeight)
     .on("click", reset);
 
 // main svg group
-var g = svg.append("g")
+var mainGroup = mapSvg.append("g")
     .style("stroke-width", "1.5px");
 
-svg
+mapSvg
     //.call(zoom) // allow free zooming
     .call(zoom.event);
+
+dataSvg = d3.select("#data").append("svg")
+  .attr("width", dataWidth)
+  .attr("height", dataHeight);
+
+var dataGroup = dataSvg.append("g")
+    .style("stroke-width", "1.5px");
 
 function clicked(d) {
   if (active.node() === this) return reset();
@@ -73,10 +82,10 @@ function clicked(d) {
       dy = bounds[1][1] - bounds[0][1],
       x = (bounds[0][0] + bounds[1][0]) / 2,
       y = (bounds[0][1] + bounds[1][1]) / 2,
-      scale = .9 / Math.max(dx / width, dy / height),
-      translate = [width / 2 - scale * x, height / 2 - scale * y];
+      scale = .9 / Math.max(dx / mapWidth, dy / mapHeight),
+      translate = [mapWidth / 2 - scale * x, mapHeight / 2 - scale * y];
 
-  svg.transition()
+  mapSvg.transition()
       .duration(750)
       .call(zoom.translate(translate).scale(scale).event);
 }
@@ -85,14 +94,14 @@ function reset() {
   active.classed("active", false);
   active = d3.select(null);
 
-  svg.transition()
+  mapSvg.transition()
       .duration(1000)
       .call(zoom.translate([0, 0]).scale(1).event);
 }
 
 function zoomed() {
-  g.style("stroke-width", 1.5 / d3.event.scale + "px");
-  g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+  mainGroup.style("stroke-width", 1.5 / d3.event.scale + "px");
+  mainGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
 
 // If the drag behavior prevents the default click,
@@ -108,61 +117,59 @@ queue()
     .defer(d3.csv, "{% static 'data/doj_focus.csv' %}")
     .await(mergeData);
 
-function mergeData(error, us, fatalencounters, doj_focus) {
+function mergeData(error, us, fatalencounters, dojFocus) {
   if (error) return console.error(error);
 
   // take the fatalencounters data, rollup counties by race
-  var fe_race_rollup = d3.nest()
+  var feRaceRollup = d3.nest()
     .key(function(d) { return d.county_fips; })
     .key(function(d) { return d.race; })
     .rollup(function(l) { return l.length; })
     .entries(fatalencounters.objects);
 
-  // pull us_counties features from topojson
-  us_counties = topojson.feature(us, us.objects.counties).features;
+  // pull usCounties features from topojson
+  usCounties = topojson.feature(us, us.objects.counties).features;
 
-  // merge fatalencounters with us_counties
-  fe_by_county = _.map(us_counties, function(county) {
-    fe_in_county = _.find(fe_race_rollup, function(c) { return c.key === county.id } );
-    if (fe_in_county) {
+  // merge FatalEncounters with usCounties
+  feByCounty = _.map(usCounties, function(county) {
+    feInCounty = _.find(feRaceRollup, function(c) { return c.key === county.id } );
+    if (feInCounty) {
       // convert nested rollup array to object 
-      by_race = _.object(_.map(fe_in_county.values, function(elem) {
+      byRace = _.object(_.map(feInCounty.values, function(elem) {
         return [elem.key, elem.values];
       }));
       county.properties.fatalencounters = {
-        by_race: by_race,
-        total: _.reduce(by_race, function(memo, r) { return memo+r; }, 0)
+        by_race: byRace,
+        total: _.reduce(byRace, function(memo, r) { return memo+r; }, 0)
       };
     }
     return county;
   });
 
-  return drawMap(us, fe_by_county);
+  return drawMap(us, feByCounty);
 }
 
-function drawMap(us, fe_by_county) {
+function drawMap(us, feByCounty) {
 
-  // g.append("path")
-  //     .datum(topojson.feature(us, us.objects.nation))
-  //     .attr("class", "state")
-  //     .attr("d", path);
-
-  g.selectAll("path")
+  // draw states
+  mainGroup.selectAll("path")
       .data(topojson.feature(us, us.objects.states).features)
     .enter().append("path")
       .attr("d", path)
       .attr("class", "state")
-      .on("click", clicked);
+      .on("click", clicked); // zoom when clicked
 
-  g.append("path")
+  // draw state borders
+  mainGroup.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "border border--state")
       .attr("d", path);
 
-  g.append("g")
+  // draw county bubbles
+  mainGroup.append("g")
       .attr("class","bubble")
     .selectAll("circle")
-      .data(fe_by_county)
+      .data(feByCounty)
     .enter().append("circle")
       .attr("transform", function(d) {
         if (d.geometry) {
@@ -177,11 +184,9 @@ function drawMap(us, fe_by_county) {
       .style("visibility", function(d) {
         return d.properties.fatalencounters ? "visible" : "hidden";
       })
-      .on("click", function(d) {
-        console.log('clicked',d);
-        d3.select(this)
-      })
-    .append("title")
+      .on("mouseover", updateData)
+      .on("mouseout", clearData)
+    /*.append("title")
       .text(function(d) {
         var text = d.properties.name
             + "\nPopulation " + formatNumber(d.properties.population);
@@ -190,26 +195,58 @@ function drawMap(us, fe_by_county) {
           if (d.properties.fatalencounters.by_race['African-American/Black'] !== undefined) {
             pct_black = d.properties.fatalencounters.by_race['African-American/Black'] /
                           d.properties.fatalencounters.total;
-            console.log(pct_black);
             text += "\n- " + formatPercent(pct_black) + " black";
           }
         }
         return text;
-      });
+      });*/
 }
 
-d3.select(self.frameElement).style("height", height + "px");
+// set up underscore to do mustache-style templates
+_.templateSettings = {
+  interpolate: /\{\{(.+?)\}\}/g
+};
 
+// compile template
+var dataTemplate = _.template($('script#data-template').html());
+
+function updateData() {
+  var data = d3.select(this)[0];
+  console.log('update',data);
+  $('#inner-data').html(dataTemplate(data.properties));
+}
+
+function clearData() {
+  console.log('clear');
+}
+
+d3.select(self.frameElement).style("height", mapHeight + "px");
+
+</script>
+
+<script type = "text/template" id="data-template">
+<h2>{{name}}</h2>
+<ul>
+  <li>Population: {{population}}</li>
+  <li>Killed by Cops: {{fatalencounters.total}}</li>
+</ul>
 </script>
 {%endblock%}
 
 {%block content%}
 <div class="map_wrapper">
-  <h1>KilledByCops Map</h1>
+  <h1>Geography of people killed by law enforcement </h1>
+  <h2>Where are people most likely to be killed by police?<br> Why isn't the government collecting this data?</h2>
   <div id="map"></div>
+  <div id="data">
+    <div id="inner-data"></div>
+  </div>
+  <p>
+    The Killed By Cops map is a project of ColorOfChange.org with data from FatalEncounters.org developed to visualize the crisis of violent policing and to call attention to the lack of a comprehensive, publicly-accessible, national database that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ, meaning that the dataset is largely incomplete and the lack of heated bubble areas is as result of the lack of available data and not because these areas are exempt from the epidemic of police violence and killings.
+  </p>
   <ul id="sources">
-    <li>Information from 2000-2014 news reports collected by <a href="http://www.fatalencounters.org">FatalEncounters.org</a></li>
-    <li>Population figures from <a href="http://factfinder2.census.gov">US Census</a>, 2012 American Community Survey
+    <li>News Reports from 2000-2014 collected by <a href="http://www.fatalencounters.org">FatalEncounters.org</a></li>
+    <li>Population from <a href="http://factfinder2.census.gov">US Census</a>, 2012 American Community Survey
     <li>Conduct of Law Enforcement cases <a href="http://www.justice.gov/crt/about/spl/findsettle.php">Department of Justice</a>
     <li>Mapping and data analysis by <a href="http://colorofchange.org">ColorOfChange.org</a></li>
   </ul>
