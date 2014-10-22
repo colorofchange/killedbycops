@@ -63,12 +63,6 @@ svg
     //.call(zoom) // allow free zooming
     .call(zoom.event);
 
-// load data files asynchronously
-queue()
-    .defer(d3.json, "{% static 'data/us.json' %}")
-    .defer(d3.json, "{% static 'data/fatalencounters.json' %}") //live data at /api/v1/fatalencounters/?format=json&limit=0
-    .await(drawMap);
-
 function clicked(d) {
   if (active.node() === this) return reset();
   active.classed("active", false);
@@ -107,7 +101,14 @@ function stopped() {
   if (d3.event.defaultPrevented) d3.event.stopPropagation();
 }
 
-function drawMap(error, us, fatalencounters) {
+// load data files asynchronously
+queue()
+    .defer(d3.json, "{% static 'data/us.json' %}")
+    .defer(d3.json, "{% static 'data/fatalencounters.json' %}")
+    .defer(d3.csv, "{% static 'data/doj_focus.csv' %}")
+    .await(mergeData);
+
+function mergeData(error, us, fatalencounters, doj_focus) {
   if (error) return console.error(error);
 
   // take the fatalencounters data, rollup counties by race
@@ -135,6 +136,11 @@ function drawMap(error, us, fatalencounters) {
     }
     return county;
   });
+
+  return drawMap(us, fe_by_county);
+}
+
+function drawMap(us, fe_by_county) {
 
   // g.append("path")
   //     .datum(topojson.feature(us, us.objects.nation))
