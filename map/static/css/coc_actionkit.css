@@ -214,7 +214,7 @@ div#menu-icon {
   color: #999;
   width: 42px;
   height: 25px;
-  background: #ecebeb url(../images/menu-icon.png) no-repeat 10px center;
+  background: #ecebeb url(http://s3.amazonaws.com/s3.colorofchange.org/images/menu-icon.png) no-repeat 10px center;
   padding: 8px 10px 0 42px;
   cursor:pointer;
   border:solid 1px #666;
