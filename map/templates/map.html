@@ -1,22 +1,17 @@
 {%extends 'base.html' %}
 {% load static from staticfiles %}
-{% load compress %}
 
 {%block styles%}
-{%compress css%}
 <link rel="stylesheet" href="{% static 'css/coc_stw.css'%}" type="text/css" />
 <link rel="stylesheet" href="{% static 'css/map.css'%}" type="text/css">
-{%endcompress%}
 {%endblock%}
 
 {%block scripts%}
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-{%compress js%}
 <script src="{% static 'js/underscore.min.js' %}"></script>
 <script src="{% static 'js/d3.js' %}"></script>
 <script src="{% static 'js/topojson.v1.min.js' %}"></script>
 <script src="{% static 'js/queue.v1.min.js' %}"></script>
-{%endcompress%}
 
 <script>
 var mapWidth = 640,
@@ -303,9 +298,7 @@ $(document).ready(function() {
   <em>Click or select a state to zoom in</em>
   <select name="states">
     <option value="-1"></option>
-    {% for code in STATE_CODES %}
-      <option value="{{code.1}}">{{code.0}}</option>
-    {%endfor%}
+    {% for code in STATE_CODES %}<option value="{{code.1}}">{{code.0}}</option>{%endfor%}
   </select>
   <p>
     The Killed By Cops map is a project of ColorOfChange.org with data from FatalEncounters.org developed to visualize the crisis of violent policing and to call attention to the lack of a comprehensive, publicly-accessible, national database that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ, meaning that the dataset is largely incomplete and the lack of heated bubble areas is as result of the lack of available data and not because these areas are exempt from the epidemic of police violence and killings.
