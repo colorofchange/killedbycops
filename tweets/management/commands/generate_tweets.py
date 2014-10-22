@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.db.models import Q
+from django.db.models import Q, Max
 from optparse import make_option
 
 from django.template.loader import render_to_string
@@ -13,7 +13,7 @@ MAX_TWEET_LENGTH = 140
 
 class Command(BaseCommand):
     args = '--only_black --geocode --attach_image --overwrite_existing'
-    help = 'Generates tweets for FatalEncounters'
+    help = 'Generates tweets for FatalEncounters, in order'
 
     option_list = BaseCommand.option_list + (
         make_option('--only_black',
@@ -43,15 +43,28 @@ class Command(BaseCommand):
 
         print 'got',len(encounters),'encounters'
 
+        last_order = Tweet.objects.filter(tweet_sent=True, order__isnull=False).aggregate(Max('order'))['order__max']
+        if last_order:
+            i = last_order
+        else:
+            i = 0
+
         for fe in encounters:
             if options['overwrite_existing']:
                 try:
                     tweet = fe.tweet
                     #print "overwriting existing tweet"
+                    if tweet.tweet_sent:
+                        print "tweet sent, skipping"
+                        continue
+
                 except Tweet.DoesNotExist:
                     tweet = Tweet(fatal_encounter=fe)
             else:
                 tweet = Tweet(fatal_encounter=fe)
+
+            i += 1
+            tweet.order = i
 
             d = model_to_dict(fe)
 
@@ -75,10 +88,11 @@ class Command(BaseCommand):
                 print "OVER MAX @", len(tweet.text)
                 print tweet.text
 
-            if len(tweet.text)+19 <= MAX_TWEET_LENGTH:
-                tweet.text = tweet.text + ' via @ColorOfChange'
+            #if len(tweet.text)+19 <= MAX_TWEET_LENGTH:
+            #    tweet.text = tweet.text + ' via @ColorOfChange'
             # use shorter template?
 
             tweet.save()
             fe.tweet = tweet
+            fe.save()
             #print "saved", tweet

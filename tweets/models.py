@@ -15,6 +15,9 @@ class Tweet(models.Model):
 
   order = models.IntegerField(null=True, blank=True)
 
+  class Meta:
+    ordering = ['order']
+
   def __unicode__(self):
     return self.text
 

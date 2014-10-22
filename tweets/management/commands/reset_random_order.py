@@ -12,7 +12,7 @@ class Command(BaseCommand):
         already_sent = Tweet.objects.filter(tweet_sent=True, order=None).order_by('tweet_sent_at')
         print "retroactively setting order for %s tweets already sent" % already_sent.count()
 
-        last_order = Tweet.objects.filter(tweet_sent=True, order__isnull=True).aggregate(Max('order'))['order__max']
+        last_order = Tweet.objects.filter(tweet_sent=True, order__isnull=False).aggregate(Max('order'))['order__max']
 
         if last_order:
             i = last_order 
