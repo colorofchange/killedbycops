@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from optparse import make_option
 from django.utils.timezone import now as utcnow
+from django.core.mail import mail_admins
 
 import sys
 import urllib
@@ -17,6 +18,12 @@ class Command(BaseCommand):
             dest='geocode',
             default=True,
             help='Lookup twitter locations for geocoding'),
+        make_option('--skip',
+            action='store',
+            dest='skip',
+            type=int,
+            default=0,
+            help='Skip ahead by number of tweets'),
     )
 
     def handle(self, *args, **options):
@@ -34,15 +41,19 @@ class Command(BaseCommand):
                 status = twitter_api.update_status(**data)
             return status
 
-        tweet = Tweet.objects.filter(tweet_sent=False).order_by('order')[0]
+        tweet = Tweet.objects.filter(tweet_sent=False).order_by('order')[options['skip']]
         data = {'status': tweet.text_replace_placeholder()}
 
         if options['geocode']:
+            print "geocoding",
             tweet.location_id = twitter_geocode(tweet.fatal_encounter.city, tweet.fatal_encounter.state)
             data['place_id'] = tweet.location_id
+            print "done"
 
         try:
+            print "posting",data,
             status = post_tweet(data, tweet.share_image_url)
+            print "done"
             tweet.tweet_sent_at = utcnow()
             tweet.tweet_sent = True
             tweet.tweet_id = status.id
@@ -51,5 +62,9 @@ class Command(BaseCommand):
 
         except tweepy.error.TweepError,e:
             print e
+            mail_admins('Tweepy error',
+                """Error posting %s
+                %s
+                """ % (data, e))
             sys.exit(-1)
 
