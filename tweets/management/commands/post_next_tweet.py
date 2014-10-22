@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 status = twitter_api.update_status(**data)
             return status
 
-        tweet = Tweet.objects.filter(tweet_sent=False).order_by('?')[0]
+        tweet = Tweet.objects.filter(tweet_sent=False).order_by('order')[0]
         data = {'status': tweet.text_replace_placeholder()}
 
         if options['geocode']:

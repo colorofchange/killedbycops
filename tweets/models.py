@@ -13,6 +13,8 @@ class Tweet(models.Model):
   tweet_sent_at = models.DateTimeField(blank=True, null=True)
   tweet_id = models.BigIntegerField(blank=True, null=True)
 
+  order = models.IntegerField(null=True, blank=True)
+
   def __unicode__(self):
     return self.text
 
