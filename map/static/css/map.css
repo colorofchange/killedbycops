@@ -62,8 +62,11 @@
   fill: #ddd;
   cursor:zoom-in;
 }
-.state.active {
+.state:hover {
   fill: #ccc;
+}
+.state.active {
+  fill: #aaa;
   cursor:default;
 }
 

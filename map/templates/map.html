@@ -107,8 +107,11 @@ function zoomToState(d) {
     .classed('active',true);
 
   scaleFactor = 0.9;
-  // NY needs to be zoomed out a little
-  if (d.id == "36") { scaleFactor = 0.75; }
+  // northeastern states needs to be zoomed out a little
+  if (d.id == "36") { scaleFactor = 0.75; } //NY
+  if (d.id == "25") { scaleFactor = 0.75; } //MA
+  if (d.id == "09") { scaleFactor = 0.5; } //CT
+  if (d.id == "44") { scaleFactor = 0.3; } //RI
 
   //calculate zoom bounds
   var bounds = path.bounds(d),
@@ -264,15 +267,13 @@ function initialData() {
 
 }
 
-function updateData() {
-  if (locked.node() !== null) {
+function updateData(d) {
+  // if locked to a different d, don't update
+  if ((locked.node() !== null) && (d.id !== locked.data()[0].id)) {
     return;
   }
 
-  var data = d3.select(this).data();
-  var county = data[0];
-
-  var angles = pieLayout(county.properties.fatalencounters.race);
+  var angles = pieLayout(d.properties.fatalencounters.race);
   //console.log(angles);
 
   var g = dataGroup.selectAll('.arc')
@@ -321,10 +322,9 @@ function lockData(d) {
   } else {
     bubbles.classed('locked',false);
     locked = d3.select(this).classed('locked',true);
+    updateData(d);
   }
 }
-
-// d3.select(self.frameElement).style("height", mapHeight + "px");
 
 $(document).ready(function() {
   // compile data template
