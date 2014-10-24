@@ -18,7 +18,8 @@ var mapWidth = 640,
     mapHeight = 480,
     dataWidth = 250,
     dataHeight = 250,
-    dataTemplate = null,
+    dataTitle = null, // template
+    dataBelow = null, // template
     active = d3.select(null), // selected state
     locked = d3.select(null), // selected county
     bubbles = d3.select(null),
@@ -75,16 +76,16 @@ mapSvg
     .call(zoom.event)
     .on('mouseout', initialData);
 
-var dataSvg = d3.select("#data").append("svg")
+var dataSvg = d3.select("#data .graph").append("svg")
   .attr("width", dataWidth)
   .attr("height", dataHeight);
 
 var dataGroup = dataSvg.append("g")
     .style("stroke-width", "1.5px")
     .attr("transform", "translate(" + dataWidth / 2 + "," + dataHeight / 2 + ")");
-dataSvg.append('text')
-    .text('Victims by Race')
-    .attr("transform", "translate(" + (dataWidth / 2 - 40) + "," + (dataHeight - 10) + ")");
+//dataSvg.append('text')
+//    .text('Victims by Race')
+//    .attr("transform", "translate(" + (dataWidth / 2 - 40) + "," + (dataHeight - 10) + ")");
 
 function clickedState(d) {
   if (active.node() === this) { return resetZoom(); }
@@ -275,18 +276,17 @@ function initialData() {
 
   if (active.node() == null) {
     // show national numbers
-    $('#inner-data').html(dataTemplate({
-      name: "",
+    $('#data .title').html(dataTitle({
+      name: "2000-2014",
       fatalencounters: {total: "over " + formatNumber(killedbycops.us.total)}
     }));
   } else {
     d = active.data()[0];
-    $('#inner-data').html(dataTemplate({
+    $('#data .title').html(dataTitle({
       name: d.properties.name,
       fatalencounters: {total: formatNumber(d.properties.fatalencounters.total)}
     }));
   }
-  
 
   var g = dataGroup.selectAll(".arc")
       .data(pieLayout(killedbycops.us.race))
@@ -303,6 +303,8 @@ function initialData() {
           return race+": "+d.data.values;
         } );
 
+    $('#data .below').html('');
+
 }
 
 function updateData(d) {
@@ -310,7 +312,7 @@ function updateData(d) {
   if ((locked.node() !== null) && (d.id !== locked.data()[0].id)) {
     return;
   }
-  
+
   var angles = pieLayout(d.properties.fatalencounters.race);
   //console.log(angles);
 
@@ -339,16 +341,14 @@ function updateData(d) {
   //     return pieArc(i(t));
   //   };
   // }); // redraw the arcs
-  
-  
 
   // format county info and fill in data template
-  output = _.extend({}, d.properties,
-    { name: d.properties.name.replace(',','<br>'),
-      fatalencounters: {total: formatNumber(d.properties.fatalencounters.total)}, // add a "more than"?
-      doj: d.properties.doj
+  outputTitle = _.extend({}, d.properties,
+    { name: d.properties.name.split(', ')[0], // drop state from "County, State"
+      fatalencounters: {total: formatNumber(d.properties.fatalencounters.total)},
     });
-  $('#inner-data').html(dataTemplate(output));
+  $('#data .title').html(dataTitle(outputTitle));
+  $('#data .below').html(dataBelow({doj: d.properties.doj}));
 }
 
 function lockData(d) {
@@ -364,8 +364,9 @@ function lockData(d) {
 }
 
 $(document).ready(function() {
-  // compile data template
-  dataTemplate = _.template($('script#data-template').html());
+  // compile data templates
+  dataTitle = _.template($('script#data-title').html());
+  dataBelow = _.template($('script#data-below').html());
 
   $('select[name="states"]').on('change', function() {
     var val = $('select[name="states"]').val();
@@ -383,24 +384,33 @@ $(document).ready(function() {
 
 </script>
 
-<script type = "text/template" id="data-template">
 {% verbatim %}
-<h2>Killed By Cops: <br/> <em><%= fatalencounters.total %></em></h2>
+<script type = "text/template" id="data-title">
+<h2>Killed By Cops:</h2>
 <h3><%= name %></h3>
-<% if (typeof(doj) != "undefined") { %>
-  <div>Department of Justice Action: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></div>
-<% } %>
-{% endverbatim %}
+<h3><em><%= fatalencounters.total %></em></h3>
 </script>
+
+<script type = "text/template" id="data-below">
+<% if (typeof(doj) != "undefined") { %>
+  <div class="doj">Federal Action: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></div>
+<% } %>
+</script>
+{% endverbatim %}
+
 {%endblock%}
 
 {%block content%}
 <div class="map_wrapper">
   <h1>Geography of people killed by law enforcement </h1>
   <h2>Where are people most likely to be killed by police?<br> Why isn't the government collecting this data?</h2>
-  <div id="map"></div>
-  <div id="data">
-    <div id="inner-data"></div>
+  <div id="d3">
+    <div id="map"></div>
+    <div id="data">
+      <div class="title"></div>
+      <div class="graph"></div>
+      <div class="below"></div>
+    </div>
   </div>
   <div id="controls">
     <em>Click or select a state to zoom in</em>

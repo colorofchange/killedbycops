@@ -34,19 +34,25 @@
   width: 250px;
   height: 480px;
   margin-left: 20px;
-  text-align:center;
 }
 
+#data .title {
+  text-align:center;
+}
 #data h2 {
   font-size: 28px;
   margin:0;
 }
-#data h2 em {
-  color: #c00;
-}
 #data h3 {
   font-size: 24px;
   margin-top: 5px;
+}
+#data h3 em {
+  color: #c00;
+}
+
+#data.below {
+  text-align: left;
 }
 
 #controls {
