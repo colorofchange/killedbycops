@@ -333,12 +333,10 @@ $(document).ready(function() {
   $('select[name="states"]').on('change', function() {
     var val = $('select[name="states"]').val();
     if (val !== "-1") {
-        // haven't figured out right way to select the state...
-        var statePath = mainGroup.selectAll("path").filter(function(d) { return Number(d.id) == val; })[0][0];
-        var stateData = _.find(mainGroup.selectAll("path").data(), function(d) { return Number(d.id) == val; });
         active.classed("active", false);
-        active = d3.select(statePath).classed("active", true);
-        zoomToState(stateData);
+        var state = mainGroup.selectAll("path").filter(function(d) { return Number(d.id) == val; });
+        active = d3.select(state.node()).classed("active", true);
+        zoomToState(state.data()[0]);
     } else {
       resetZoom();
     }
