@@ -82,6 +82,9 @@ var dataSvg = d3.select("#data").append("svg")
 var dataGroup = dataSvg.append("g")
     .style("stroke-width", "1.5px")
     .attr("transform", "translate(" + dataWidth / 2 + "," + dataHeight / 2 + ")");
+dataSvg.append('text')
+    .text('Victims by Race')
+    .attr("transform", "translate(" + (dataWidth / 2 - 40) + "," + (dataHeight - 10) + ")");
 
 function clickedState(d) {
   if (active.node() === this) { return resetZoom(); }
