@@ -22,7 +22,7 @@ var mapWidth = 640,
     active = d3.select(null), // selected state
     locked = d3.select(null), // selected county
     bubbles = d3.select(null),
-    nation = {};
+    killedbycops = {};
 
 var formatNumber = d3.format(",.0f");
 var formatPercent = d3.format(".1%");
@@ -126,6 +126,8 @@ function zoomToState(d) {
   mapSvg.transition()
       .duration(750)
       .call(zoom.translate(translate).scale(scale).event);
+
+  updateData(d);
 }
 
 function resetZoom() {
@@ -162,26 +164,18 @@ queue()
 function mergeData(error, us, fatalencounters, dojFocus) {
   if (error) return console.error(error);
 
-  // rollup national numbers
-  nation = {};
-  nation.fatalencounters = {};
-  nation.fatalencounters.race = d3.nest()
-    .key(function(d) { return d.race; })
-    .rollup(function(l) { return l.length; })
-    .entries(fatalencounters.objects);
-  nation.fatalencounters.total = d3.sum(nation.fatalencounters.race, function(d) { return d.values; });
-  nation.population = d3.sum(us.objects.counties.geometries, function(d) { return d.properties.population; });
+  killedbycops = {us: {}, states:{}, counties:{}};
 
-  // nest fatalencounters by county & race w/ rollup
-  var feByCounty = d3.nest()
+  // rollup county numbers by race
+  killedbycops.counties = d3.nest()
     .key(function(d) { return d.county_fips; })
     .key(function(d) { return d.race; })
     .rollup(function(l) { return l.length; })
     .entries(fatalencounters.objects);
 
-  // merge fatalencounters with us county geometry
+  // merge with county geometry
   var usCounties = topojson.feature(us, us.objects.counties).features;
-  var data = _.map(feByCounty, function(county) {
+  killedbycops.counties = _.map(killedbycops.counties, function(county) {
       geom = _.find(usCounties, function(g) { return g.id === county.key; } );
       geom.properties.fatalencounters = {
         race: county.values,
@@ -192,20 +186,52 @@ function mergeData(error, us, fatalencounters, dojFocus) {
 
   // merge DOJ focus areas
   _.each(dojFocus, function(a) {
-    var c = _.find(data, function(d) {
+    var c = _.find(killedbycops.counties, function(d) {
       return d.id === a.FIPS;
     });
     if (c) { c.properties.doj = {status: a["DoJ Status"], url: a['URL']}; }
   });
 
-  return drawMap(us, data);
+    // rollup state numbers by race, and sum
+  killedbycops.states = d3.nest()
+    .key(function(d) { return d.county_fips.substring(0,2); })
+    .key(function(d) { return d.race; })
+    .rollup(function(l) { return l.length; })
+    .entries(fatalencounters.objects);
+
+  // merge with state geometry
+  var usStates = topojson.feature(us, us.objects.states).features;
+  killedbycops.states = _.map(killedbycops.states, function(state) {
+      geom = _.find(usStates, function(g) { return g.id === state.key; } );
+      geom.properties.name = "";
+      geom.properties.fatalencounters = {
+        race: state.values,
+        total: d3.sum(state.values, function(d) { return d.values; })
+      };
+    return geom;
+  });
+
+  // compute state border mesh
+  killedbycops.stateBorders = topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; });
+
+  // rollup national numbers by race, and sum
+  killedbycops.us = {};
+  killedbycops.us.race = d3.nest()
+    .key(function(d) { return d.race; })
+    .rollup(function(l) { return l.length; })
+    .entries(fatalencounters.objects);
+  killedbycops.us.total = d3.sum(killedbycops.us.race, function(d) { return d.values; });
+
+  console.log(killedbycops);
+
+  return drawMap(killedbycops);
 }
 
-function drawMap(us, feCountyData) {
+function drawMap(killedbycops) {
 
   // draw states
   mainGroup.selectAll("path")
-      .data(topojson.feature(us, us.objects.states).features)
+      .data(killedbycops.states)
     .enter().append("path")
       .attr("d", path)
       .attr("class", "state")
@@ -213,7 +239,7 @@ function drawMap(us, feCountyData) {
 
   // draw state borders
   mainGroup.append("path")
-      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .datum(killedbycops.stateBorders)
       .attr("class", "border border--state")
       .attr("d", path);
 
@@ -221,7 +247,7 @@ function drawMap(us, feCountyData) {
   bubbles = mainGroup.append("g")
       .attr("class","bubble")
     .selectAll("circle")
-      .data(feCountyData
+      .data(killedbycops.counties
         .sort(function(a, b) {
           return (b.properties.fatalencounters.total - a.properties.fatalencounters.total);;
          })
@@ -243,15 +269,24 @@ function initialData() {
   if (locked.node() !== null) {
     return;
   }
-  // show national numbers
-  $('#inner-data').html(dataTemplate({
-    name: "2000-2014<br><br>",
-    population: formatNumber(nation.population),
-    fatalencounters: {total: "over "+formatNumber(nation.fatalencounters.total)}
-  }));
+
+  if (active.node() == null) {
+    // show national numbers
+    $('#inner-data').html(dataTemplate({
+      name: "",
+      fatalencounters: {total: "over " + formatNumber(killedbycops.us.total)}
+    }));
+  } else {
+    d = active.data()[0];
+    $('#inner-data').html(dataTemplate({
+      name: d.properties.name,
+      fatalencounters: {total: formatNumber(d.properties.fatalencounters.total)}
+    }));
+  }
+  
 
   var g = dataGroup.selectAll(".arc")
-      .data(pieLayout(nation.fatalencounters.race))
+      .data(pieLayout(killedbycops.us.race))
     .enter().append("g")
       .attr("class", "arc");
 
@@ -272,6 +307,9 @@ function updateData(d) {
   if ((locked.node() !== null) && (d.id !== locked.data()[0].id)) {
     return;
   }
+
+  console.log(d.properties.fatalencounters.total);
+
 
   var angles = pieLayout(d.properties.fatalencounters.race);
   //console.log(angles);
@@ -305,11 +343,10 @@ function updateData(d) {
   
 
   // format county info and fill in data template
-  output = _.extend({}, county.properties,
-    { name: county.properties.name.replace(',','<br>'),
-      population: formatNumber(county.properties.population),
-      fatalencounters: {total: formatNumber(county.properties.fatalencounters.total)}, // add a "more than"?
-      doj: county.properties.doj
+  output = _.extend({}, d.properties,
+    { name: d.properties.name.replace(',','<br>'),
+      fatalencounters: {total: formatNumber(d.properties.fatalencounters.total)}, // add a "more than"?
+      doj: d.properties.doj
     });
   $('#inner-data').html(dataTemplate(output));
 }
@@ -348,14 +385,11 @@ $(document).ready(function() {
 
 <script type = "text/template" id="data-template">
 {% verbatim %}
-<h2>Killed By Cops:</h2><h3><%= name %></h3>
-<ul>
-  <li class="big"><%= fatalencounters.total %></li>
-  <li>Population: <%= population %></li>
-  <% if (typeof(doj) != "undefined") { %>
-  <li>Department of Justice Status: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></li>
-  <% } %>
-</ul>
+<h2>Killed By Cops: <br/> <em><%= fatalencounters.total %></em></h2>
+<h3><%= name %></h3>
+<% if (typeof(doj) != "undefined") { %>
+  <div>Department of Justice Action: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></div>
+<% } %>
 {% endverbatim %}
 </script>
 {%endblock%}
@@ -380,7 +414,6 @@ $(document).ready(function() {
   </p>
   <ul id="sources">
     <li>News Reports from 2000-2014 collected by <a href="http://www.fatalencounters.org">FatalEncounters.org</a></li>
-    <li>Population from <a href="http://factfinder2.census.gov">US Census</a>, 2012 American Community Survey
     <li>Conduct of Law Enforcement cases <a href="http://www.justice.gov/crt/about/spl/findsettle.php">Department of Justice</a>
     <li>Mapping and data analysis by <a href="http://colorofchange.org">ColorOfChange.org</a></li>
   </ul>
