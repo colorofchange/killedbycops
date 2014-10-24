@@ -24,6 +24,7 @@
   float: left;
   width: 640px;
   height: 480px;
+  margin-bottom: 10px;
 }
 
 #data {
@@ -33,11 +34,20 @@
   height: 480px;
   margin-left: 20px;
   border: 0.5px solid black;
+  text-align:center;
 }
 
 #data h2 {
-  text-align:center;
   font-size: 28px;
+  margin:0;
+}
+#data h3 {
+  font-size: 24px;
+  margin-top: 5px;
+}
+
+#controls {
+  float: left;
 }
 
 .background {
@@ -46,11 +56,11 @@
   stroke: #000;
 }
 
-.state.active {
-}
-
 .state {
   fill: #ddd;
+}
+.state.active {
+  fill: #ccc;
 }
 
 .border {
@@ -65,6 +75,28 @@
   fill-opacity: .5;
   stroke: #fff;
   stroke-width: .5px;
+  pointer-events: all;
+}
+
+.bubble circle.active {
+  fill-opacity: 0.5;
+}
+.bubble circle.inactive {
+  fill-opacity: 0.05;
+  stroke-width: 0;
+  pointer-events: none;
+}
+
+.state.active {
+  fill: #ccc;
+}
+
+.bubble circle.active {
+  fill-opacity: 0.5;
+}
+.bubble circle.inactive {
+  fill-opacity: 0.05;
+  stroke-width: 0;
 }
 
 .bubble :hover {

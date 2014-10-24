@@ -17,11 +17,11 @@
 var mapWidth = 640,
     mapHeight = 480,
     dataWidth = 250,
-    dataHeight = 480,
+    dataHeight = 250,
+    dataTemplate = null,
     active = d3.select(null),
-    dataTemplate,
-    feNational, feNationalTotal, popNational,
-    usMap;
+    bubbles = d3.select(null),
+    nation = {};
 
 var formatNumber = d3.format(",.0f");
 var formatPercent = d3.format(".1%");
@@ -32,13 +32,17 @@ var path = d3.geo.path()
 
 // radius of county bubbles is scaled on sqrt, for area comparisons
 var radius = d3.scale.sqrt()
-    .domain([0, 15])
-    .range([0, 15]);
+    .domain([0, 1])
+    .range([0, 3]);
 
-// pie charts 
-var pie = d3.layout.pie()
-    .sort(null)
-    .value(function(d) { return d.population; });
+// pie charts of rolled up data
+var pieRollup = d3.layout.pie()
+    //.sort(null)
+    .value(function(d) { return d.values; });
+
+// colors from coc menu, in order
+var raceColors = d3.scale.ordinal()
+    .range(['#f63','#c00','#9a679a','#ffcd32','#09C','#1D8B32']);
 
 // main svg object
 var mapSvg = d3.select("#map").append("svg")
@@ -69,12 +73,13 @@ mapSvg
     .call(zoom.event)
     .on('mouseout', initialData);
 
-dataSvg = d3.select("#data").append("svg")
+var dataSvg = d3.select("#data").append("svg")
   .attr("width", dataWidth)
   .attr("height", dataHeight);
 
 var dataGroup = dataSvg.append("g")
-    .style("stroke-width", "1.5px");
+    .style("stroke-width", "1.5px")
+    .attr("transform", "translate(" + dataWidth / 2 + "," + dataHeight / 2 + ")");
 
 function clickedState(d) {
   if (active.node() === this) { return resetZoom(); }
@@ -87,20 +92,39 @@ function clickedState(d) {
 }
 
 function zoomToState(d) {
-    var bounds = path.bounds(d),
+  //set all bubbles inactive
+  bubbles.classed('inactive',true)
+    .classed('active',false);
+
+  //and just the ones in this state as active
+  bubbles.filter(function(c) { return c.id.substring(0,2) == d.id; })
+    .classed('inactive',false)
+    .classed('active',true);
+
+  scaleFactor = 0.9;
+  // NY needs to be zoomed out a little
+  if (d.id == "36") { scaleFactor = 0.75; }
+
+  //calculate zoom bounds
+  var bounds = path.bounds(d),
       dx = bounds[1][0] - bounds[0][0],
       dy = bounds[1][1] - bounds[0][1],
       x = (bounds[0][0] + bounds[1][0]) / 2,
       y = (bounds[0][1] + bounds[1][1]) / 2,
-      scale = .9 / Math.max(dx / mapWidth, dy / mapHeight),
+      scale = scaleFactor / Math.max(dx / mapWidth, dy / mapHeight),
       translate = [mapWidth / 2 - scale * x, mapHeight / 2 - scale * y];
 
+  // run the transition
   mapSvg.transition()
       .duration(750)
       .call(zoom.translate(translate).scale(scale).event);
 }
 
 function resetZoom() {
+  //unset all bubble states
+  bubbles.classed("inactive",false);
+  bubbles.classed("active",false);
+
   active.classed("active", false);
   active = d3.select(null);
 
@@ -129,46 +153,43 @@ queue()
 
 function mergeData(error, us, fatalencounters, dojFocus) {
   if (error) return console.error(error);
-  usMap = us;
 
   // rollup national numbers
-  feNational = d3.nest()
+  nation = {};
+  nation.fatalencounters = {};
+  nation.fatalencounters.race = d3.nest()
     .key(function(d) { return d.race; })
     .rollup(function(l) { return l.length; })
     .entries(fatalencounters.objects);
-  feNationalTotal = d3.sum(feNational, function(d) { return d.values; });
-  popNational = d3.sum(us.objects.counties.geometries, function(d) { return d.properties.population; });
+  nation.fatalencounters.total = d3.sum(nation.fatalencounters.race, function(d) { return d.values; });
+  nation.population = d3.sum(us.objects.counties.geometries, function(d) { return d.properties.population; });
 
-  // rollup counties by race
-  var feRaceRollup = d3.nest()
+  // nest fatalencounters by county & race w/ rollup
+  var feByCounty = d3.nest()
     .key(function(d) { return d.county_fips; })
     .key(function(d) { return d.race; })
     .rollup(function(l) { return l.length; })
     .entries(fatalencounters.objects);
 
-  // pull usCounties features from topojson
+  // merge fatalencounters with us county geometry
   var usCounties = topojson.feature(us, us.objects.counties).features;
-
-  // merge FatalEncounters with usCounties
-  feByCounty = _.map(usCounties, function(county) {
-    feInCounty = _.find(feRaceRollup, function(c) { return c.key === county.id } );
-    if (feInCounty) {
+  var feCountyData = _.map(feByCounty, function(county) {
+      geom = _.find(usCounties, function(c) { return c.id === county.key; } );
       // convert nested rollup array to object 
-      byRace = _.object(_.map(feInCounty.values, function(elem) {
+      var byRace = _.object(_.map(county.values, function(elem) {
         return [elem.key, elem.values];
       }));
-      county.properties.fatalencounters = {
-        by_race: byRace,
+      geom.properties.fatalencounters = {
+        race: byRace,
         total: _.reduce(byRace, function(memo, r) { return memo+r; }, 0)
       };
-    }
-    return county;
+    return geom;
   });
 
-  return drawMap(us, feByCounty);
+  return drawMap(us, feCountyData);
 }
 
-function drawMap(us, feByCounty) {
+function drawMap(us, feCountyData) {
 
   // draw states
   mainGroup.selectAll("path")
@@ -185,39 +206,22 @@ function drawMap(us, feByCounty) {
       .attr("d", path);
 
   // draw county bubbles
-  mainGroup.append("g")
+  bubbles = mainGroup.append("g")
       .attr("class","bubble")
     .selectAll("circle")
-      .data(feByCounty)
+      .data(feCountyData
+        .sort(function(a, b) {
+          return (b.properties.fatalencounters.total - a.properties.fatalencounters.total);;
+         })
+      )
     .enter().append("circle")
       .attr("transform", function(d) {
-        if (d.geometry) {
-          return "translate(" + path.centroid(d) + ")";
-        } else {
-          return "";
-        }
+        return "translate(" + path.centroid(d) + ")";
       })
       .attr("r", function(d) {
-        return d.properties.fatalencounters ? radius(d.properties.fatalencounters.total) : radius(0);
+        return radius(d.properties.fatalencounters.total);
       })
-      .style("visibility", function(d) {
-        return d.properties.fatalencounters ? "visible" : "hidden";
-      })
-      .on("mouseover", updateData)
-    /*.append("title")
-      .text(function(d) {
-        var text = d.properties.name
-            + "\nPopulation " + formatNumber(d.properties.population);
-        if (d.properties.fatalencounters) {
-          text += "\n" + formatNumber(d.properties.fatalencounters.total) + " killed by cops";
-          if (d.properties.fatalencounters.by_race['African-American/Black'] !== undefined) {
-            pct_black = d.properties.fatalencounters.by_race['African-American/Black'] /
-                          d.properties.fatalencounters.total;
-            text += "\n- " + formatPercent(pct_black) + " black";
-          }
-        }
-        return text;
-      });*/
+      .on("mouseover", updateData);
 
   initialData();
 }
@@ -225,24 +229,33 @@ function drawMap(us, feByCounty) {
 function initialData() {
   // show national numbers
   $('#inner-data').html(dataTemplate({
-    name: "Killed by Cops 2000-2014",
-    population: formatNumber(popNational),
-    fatalencounters: {total: "over "+formatNumber(feNationalTotal)}
+    name: "2000-2014<br><br>",
+    population: formatNumber(nation.population),
+    fatalencounters: {total: "over "+formatNumber(nation.fatalencounters.total)}
   }));
+
+  var g = dataGroup.selectAll(".arc")
+      .data(pieRollup(nation.fatalencounters.race))
+    .enter().append("g")
+      .attr("class", "arc");
+
+    g.append("path")
+      .attr("d", d3.svg.arc().outerRadius(100).innerRadius(0) )
+      .style("fill", function(d) { return raceColors(d.data.key); })
+      .append("title")
+        .text(function(d) { return d.data.key+": "+d.data.values; } );
+
 }
 
 function updateData() {
   var data = d3.select(this).data()[0];
   console.log('update',data.properties);
   formatted_data = _.extend({}, data.properties,
-    { population: formatNumber(data.properties.population),
+    { name: data.properties.name.replace(',','<br>'),
+      population: formatNumber(data.properties.population),
       total: formatNumber(data.properties.fatalencounters.total),
     });
   $('#inner-data').html(dataTemplate(formatted_data));
-}
-
-function clearData() {
-  console.log('clear');
 }
 
 d3.select(self.frameElement).style("height", mapHeight + "px");
@@ -258,17 +271,15 @@ $(document).ready(function() {
 
   $('select[name="states"]').on('change', function() {
     var val = $('select[name="states"]').val();
-    if (val !== -1) {
-        var state = _.find(mainGroup.selectAll("path").data(), function(d) { return Number(d.id) == val; });
-
+    if (val !== "-1") {
+        // haven't figured out right way to select the state...
+        var statePath = mainGroup.selectAll("path").filter(function(d) { return Number(d.id) == val; })[0][0];
+        var stateData = _.find(mainGroup.selectAll("path").data(), function(d) { return Number(d.id) == val; });
         active.classed("active", false);
-        //active = d3.select(state).classed("active", true);
-
-        zoomToState(state);
+        active = d3.select(statePath).classed("active", true);
+        zoomToState(stateData);
     } else {
-      //active = d3.select(null);
-      //resetZoom();
-      $('rect.background').click();
+      resetZoom();
     }
 
   });
@@ -278,10 +289,10 @@ $(document).ready(function() {
 
 <script type = "text/template" id="data-template">
 {% verbatim %}
-<h2>{{name}}</h2>
+<h2>Killed By Cops:</h2><h3>{{name}}</h3>
 <ul>
+  <li>{{fatalencounters.total}}</li>
   <li>Population: {{population}}</li>
-  <li>Killed by Cops: {{fatalencounters.total}}</li>
 </ul>
 {% endverbatim %}
 </script>
@@ -295,11 +306,13 @@ $(document).ready(function() {
   <div id="data">
     <div id="inner-data"></div>
   </div>
-  <em>Click or select a state to zoom in</em>
-  <select name="states">
+  <div id="controls">
+    <em>Click or select a state to zoom in</em>
+    <select name="states">
     <option value="-1"></option>
     {% for code in STATE_CODES %}<option value="{{code.1}}">{{code.0}}</option>{%endfor%}
-  </select>
+    </select>
+  </div>
   <p>
     The Killed By Cops map is a project of ColorOfChange.org with data from FatalEncounters.org developed to visualize the crisis of violent policing and to call attention to the lack of a comprehensive, publicly-accessible, national database that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ, meaning that the dataset is largely incomplete and the lack of heated bubble areas is as result of the lack of available data and not because these areas are exempt from the epidemic of police violence and killings.
   </p>
