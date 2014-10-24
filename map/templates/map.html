@@ -35,10 +35,11 @@ var radius = d3.scale.sqrt()
     .domain([0, 1])
     .range([0, 3]);
 
-// pie charts of rolled up data
-var pieRollup = d3.layout.pie()
+// pie charts for race breakdown
+var pieLayout = d3.layout.pie()
     //.sort(null)
     .value(function(d) { return d.values; });
+var pieArc = d3.svg.arc().outerRadius(100).innerRadius(0)
 
 // colors from coc menu, in order
 var raceColors = d3.scale.ordinal()
@@ -175,13 +176,9 @@ function mergeData(error, us, fatalencounters, dojFocus) {
   var usCounties = topojson.feature(us, us.objects.counties).features;
   var feCountyData = _.map(feByCounty, function(county) {
       geom = _.find(usCounties, function(c) { return c.id === county.key; } );
-      // convert nested rollup array to object 
-      var byRace = _.object(_.map(county.values, function(elem) {
-        return [elem.key, elem.values];
-      }));
       geom.properties.fatalencounters = {
-        race: byRace,
-        total: _.reduce(byRace, function(memo, r) { return memo+r; }, 0)
+        race: county.values,
+        total: d3.sum(county.values, function(d) { return d.values; })
       };
     return geom;
   });
@@ -235,27 +232,64 @@ function initialData() {
   }));
 
   var g = dataGroup.selectAll(".arc")
-      .data(pieRollup(nation.fatalencounters.race))
+      .data(pieLayout(nation.fatalencounters.race))
     .enter().append("g")
       .attr("class", "arc");
 
     g.append("path")
-      .attr("d", d3.svg.arc().outerRadius(100).innerRadius(0) )
+      .attr("d", pieArc )
+      .each(function(d) { this._current = d; }) // store the initial angles
       .style("fill", function(d) { return raceColors(d.data.key); })
       .append("title")
-        .text(function(d) { return d.data.key+": "+d.data.values; } );
+        .text(function(d) {
+          var race = d.data.key == "" ? 'Unknown' : d.data.key;
+          return race+": "+d.data.values;
+        } );
 
 }
 
 function updateData() {
-  var data = d3.select(this).data()[0];
-  console.log('update',data.properties);
-  formatted_data = _.extend({}, data.properties,
-    { name: data.properties.name.replace(',','<br>'),
-      population: formatNumber(data.properties.population),
-      total: formatNumber(data.properties.fatalencounters.total),
+  var data = d3.select(this).data();
+  var county = data[0];
+
+  var angles = pieLayout(county.properties.fatalencounters.race);
+  //console.log(angles);
+
+  var g = dataGroup.selectAll('.arc')
+    .data(angles);
+
+  // shouldn't need to add any, because initial load includes all categories from rollup
+  // g.enter().append("g")
+  //   .attr("class", "arc")
+  //   .attr("d", pieArc )
+  //   .each(function(d) { console.log("added",d); });
+
+  g.selectAll("path").transition()
+    .attr("d", pieArc)
+    .each(function(d) { console.log("updated",d); });
+    
+  g.exit().transition().remove();
+    
+  // tween gracefully
+  // .attrTween("d", function arcTween(a) {
+  //   console.log(a);
+  //   // tween by interpolating
+  //   var i = d3.interpolate(this._current, a);
+  //   this._current = i(0);
+  //   return function(t) {
+  //     return pieArc(i(t));
+  //   };
+  // }); // redraw the arcs
+  
+  
+
+  // format county info and fill in data template
+  output = _.extend({}, county.properties,
+    { name: county.properties.name.replace(',','<br>'),
+      population: formatNumber(county.properties.population),
+      fatalencounters: {total: formatNumber(county.properties.fatalencounters.total)}, // add a "more than"?
     });
-  $('#inner-data').html(dataTemplate(formatted_data));
+  $('#inner-data').html(dataTemplate(output));
 }
 
 d3.select(self.frameElement).style("height", mapHeight + "px");
