@@ -355,7 +355,7 @@ $(document).ready(function() {
   <li class="big"><%= fatalencounters.total %></li>
   <li>Population: <%= population %></li>
   <% if (typeof(doj) != "undefined") { %>
-  <li>Department of Justice Status: <a href="<%= doj.url %>"><%= doj.status %></a></li>
+  <li>Department of Justice Status: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></li>
   <% } %>
 </ul>
 {% endverbatim %}
