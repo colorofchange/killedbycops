@@ -8,6 +8,7 @@ from fatalencounters.serializers import PrettyJSONSerializer
 
 
 class FatalEncounterResource(ModelResource):
+    race = fields.CharField(attribute="get_race_display")
     county_fips = fields.CharField(attribute='county_fips', readonly=True)
 
     class Meta:

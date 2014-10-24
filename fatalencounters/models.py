@@ -1,11 +1,23 @@
 from django.db import models
 
+#2010 CENSUS CATEGORIES
+RACE_CHOICES = (
+  ('WHITE', 'White'),
+  ('BLACK', 'Black or African American'),
+  ('NATIVE', 'American Indian and Alaska Native'),
+  ('ASIAN', 'Asian'),
+  ('HAWAIIAN', 'Native Hawaiian and Other Pacific Islander'),
+  ('LATINO', 'Hispanic, Latino, or Spanish'), #this is treated separately in the census, but not in our available data
+  ('MULTIPLE', 'Two or more races'),
+  ('OTHER', 'Other')
+)
+
 class FatalEncounter(models.Model):
   #fields from fatal encounters data
   name = models.CharField(max_length=255)
   age = models.IntegerField(null=True)
   gender = models.CharField(null=True, max_length=1, choices=(('M','Male'),('F','Female')))
-  race = models.CharField(null=True, max_length=100)
+  race = models.CharField(null=True, max_length=10, choices=RACE_CHOICES)
   photo_url = models.URLField(blank=True, null=True, max_length=1000)
   date_of_injury = models.DateField(null=True)
   city = models.CharField(max_length=255, null=True)

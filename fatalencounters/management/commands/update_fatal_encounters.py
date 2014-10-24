@@ -50,7 +50,7 @@ class Command(BaseCommand):
                 row_num += 1
                 
                 try:
-                    data = {'name':row[1].strip(), 'age':row[2], 'race':row[4].strip(),
+                    data = {'name':row[1].strip(), 'age':row[2],
                             'city':row[8], 'state':row[9][:2], 'agency_responsible':row[12],
                             'photo_url': row[5], 'source_url':row[16]}
 
@@ -62,6 +62,41 @@ class Command(BaseCommand):
                     #convert Male/Female to single character
                     if len(row[3]) > 1:
                         data['gender'] =  row[3][0]
+
+                    #deal with un-structured races
+                    race_us = row[4].strip()
+
+                    RACE_CLASSIFIER = {
+                        'African American/Black':'BLACK',
+                        'African-American':'BLACK',
+                        'African-American/Black':'BLACK',
+                        'African-American/Black, Sudanese':'BLACK',
+                        'African-American/Black, Unknown race':'BLACK',
+                        'Asian':'ASIAN',
+                        'Eureopean-American/White':'WHITE',
+                        'European American/white':'WHITE',
+                        'European-American':'WHITE',
+                        'European-American/White':'WHITE',
+                        #this gets tricky, but for aggregate purposes treat mix as non-white
+                        'European-American/White, African-American/Black, Mixed':'BLACK',
+                        'European-American/White, Asian, Mixed':'ASIAN',
+                        'European-American/White, Hispanic/Latino':'LATINO',
+                        'European-American/White, Unknown race':'WHITE',
+                        'Haitian-American':'BLACK',
+                        'Hispanic/Latina':'LATINO',
+                        'Hispanic/Latino':'LATINO',
+                        'Hispanic/Latino/Latino':'LATINO',
+                        'Middle Eastern':'WHITE',
+                        'Mixed':'MULTIPLE',
+                        'Native American':'NATIVE',
+                        'Native American/Alaskan':'NATIVE',
+                        'Pacific Islander':'HAWAIIAN',
+                    }
+                    matched_key = ""
+                    for (l,s) in RACE_CLASSIFIER.items():
+                        if race_us == l:
+                            matched_key = s
+                    data['race'] = matched_key
 
                     #handle malformed dates
                     try:
@@ -96,9 +131,9 @@ class Command(BaseCommand):
                             defaults=data)
 
                     if created:
-                        print 'row',row_num,'created',fe.name
+                        print 'row',row_num,'created',fe.name,':', fe.race
                     else:
-                        print 'row',row_num,'updated',fe.name
+                        print 'row',row_num,'updated',fe.name,':', fe.race
                 except Exception, e:
                     print 'error saving #',row_num
                     print e

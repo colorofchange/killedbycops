@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.db.models import Q, Max
+from django.db.models import Max
 from optparse import make_option
 
 from django.template.loader import render_to_string
@@ -20,7 +20,7 @@ class Command(BaseCommand):
             action='store_true',
             dest='only_black',
             default=True,
-            help='Only for encounters where race contains "Black"'),
+            help='Only for encounters with black people'),
         make_option('--overwrite_existing',
             action='store_true',
             dest='overwrite_existing',
@@ -38,8 +38,7 @@ class Command(BaseCommand):
 
         if options['only_black']:
             print "only black FatalEncounters"
-            encounters = encounters.filter(Q(race__contains='Black') | Q(race__contains='African-American') | Q(race__contains='African American'))
-            #inconsistent racial coding in underlying data...
+            encounters = encounters.filter(race='BLACK')
 
         print 'got',len(encounters),'encounters'
 
