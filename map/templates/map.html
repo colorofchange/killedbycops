@@ -19,7 +19,8 @@ var mapWidth = 640,
     dataWidth = 250,
     dataHeight = 250,
     dataTemplate = null,
-    active = d3.select(null),
+    active = d3.select(null), // selected state
+    locked = d3.select(null), // selected county
     bubbles = d3.select(null),
     nation = {};
 
@@ -174,8 +175,8 @@ function mergeData(error, us, fatalencounters, dojFocus) {
 
   // merge fatalencounters with us county geometry
   var usCounties = topojson.feature(us, us.objects.counties).features;
-  var feCountyData = _.map(feByCounty, function(county) {
-      geom = _.find(usCounties, function(c) { return c.id === county.key; } );
+  var data = _.map(feByCounty, function(county) {
+      geom = _.find(usCounties, function(g) { return g.id === county.key; } );
       geom.properties.fatalencounters = {
         race: county.values,
         total: d3.sum(county.values, function(d) { return d.values; })
@@ -183,7 +184,15 @@ function mergeData(error, us, fatalencounters, dojFocus) {
     return geom;
   });
 
-  return drawMap(us, feCountyData);
+  // merge DOJ focus areas
+  _.each(dojFocus, function(a) {
+    var c = _.find(data, function(d) {
+      return d.id === a.FIPS;
+    });
+    if (c) { c.properties.doj = {status: a["DoJ Status"], url: a['URL']}; }
+  });
+
+  return drawMap(us, data);
 }
 
 function drawMap(us, feCountyData) {
@@ -218,12 +227,16 @@ function drawMap(us, feCountyData) {
       .attr("r", function(d) {
         return radius(d.properties.fatalencounters.total);
       })
-      .on("mouseover", updateData);
+      .on("mouseover", updateData)
+      .on("click", lockData);
 
   initialData();
 }
 
 function initialData() {
+  if (locked.node() !== null) {
+    return;
+  }
   // show national numbers
   $('#inner-data').html(dataTemplate({
     name: "2000-2014<br><br>",
@@ -249,6 +262,10 @@ function initialData() {
 }
 
 function updateData() {
+  if (locked.node() !== null) {
+    return;
+  }
+
   var data = d3.select(this).data();
   var county = data[0];
 
@@ -265,8 +282,8 @@ function updateData() {
   //   .each(function(d) { console.log("added",d); });
 
   g.selectAll("path").transition()
-    .attr("d", pieArc)
-    .each(function(d) { console.log("updated",d); });
+    .attr("d", pieArc);
+    // .each(function(d) { console.log("updated",d); });
     
   //g.exit().transition().remove();
     
@@ -288,19 +305,26 @@ function updateData() {
     { name: county.properties.name.replace(',','<br>'),
       population: formatNumber(county.properties.population),
       fatalencounters: {total: formatNumber(county.properties.fatalencounters.total)}, // add a "more than"?
+      doj: county.properties.doj
     });
   $('#inner-data').html(dataTemplate(output));
 }
 
-d3.select(self.frameElement).style("height", mapHeight + "px");
+function lockData(d) {
+  if (locked.node() === this) {
+    d3.select(this).classed('locked',false);
+    locked = d3.select(null);
+    return;
+  } else {
+    bubbles.classed('locked',false);
+    locked = d3.select(this).classed('locked',true);
+  }
+}
+
+// d3.select(self.frameElement).style("height", mapHeight + "px");
 
 $(document).ready(function() {
-    // set up underscore to do mustache-style templates
-  _.templateSettings = {
-    interpolate: /\{\{(.+?)\}\}/g
-  };
-
-  // compile template
+  // compile data template
   dataTemplate = _.template($('script#data-template').html());
 
   $('select[name="states"]').on('change', function() {
@@ -323,10 +347,13 @@ $(document).ready(function() {
 
 <script type = "text/template" id="data-template">
 {% verbatim %}
-<h2>Killed By Cops:</h2><h3>{{name}}</h3>
+<h2>Killed By Cops:</h2><h3><%= name %></h3>
 <ul>
-  <li>{{fatalencounters.total}}</li>
-  <li>Population: {{population}}</li>
+  <li class="big"><%= fatalencounters.total %></li>
+  <li>Population: <%= population %></li>
+  <% if (typeof(doj) != "undefined") { %>
+  <li>Department of Justice Status: <a href="<%= doj.url %>"><%= doj.status %></a></li>
+  <% } %>
 </ul>
 {% endverbatim %}
 </script>

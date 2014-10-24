@@ -1,32 +1,31 @@
-Jurisdiction,County,State,DoJ Status,URL
-St Louis,St Louis City,MO,Voluntary Agreement,http://www.washingtonpost.com/blogs/federal-eye/wp/2014/09/05/five-facts-about-dojs-civil-rights-investigations-under-eric-holder/
-Las Vegas,Clark County,NV,Voluntary Agreement,http://www.washingtonpost.com/blogs/federal-eye/wp/2014/09/05/five-facts-about-dojs-civil-rights-investigations-under-eric-holder/
-New Orleans,Orleans Parish,LA,Consent Decree,http://www.justice.gov/crt/about/spl/nopd.php
-Puerto Rico,,PR,Voluntary Agreement,http://www.justice.gov/crt/about/spl/pr.php
-Alamance County,Alamance County,NC,Not Cooperating with Investigation,http://www.justice.gov/crt/about/spl/documents/acso_complaint_12-20-12.pdf
-Colorado City,Mohave County,AZ,Complaint filed. Not Cooperating with Investigation,http://www.justice.gov/crt/about/spl/documents/coloradocity_complaint_6-21-12.pdf
-Maricopa County,Maricopa County,AZ,Pattern or practice of unlawful discriminatory police conduct. Not Cooperating with Investigation,http://www.justice.gov/crt/about/spl/mcso.php
-Meridian,Lauderdale County,MS,Not Cooperating,http://www.washingtonpost.com/blogs/federal-eye/wp/2014/09/05/five-facts-about-dojs-civil-rights-investigations-under-eric-holder/
-Albuquerque,Bernalillo County,NM,Open investigation,http://www.justice.gov/crt/about/spl/documents/apd_findings_4-10-14.pdf
-Cleveland,Cuyahoga County,OH,Open investigation,
-Los Angeles,Los Angeles County,CA,Open investigation,
-Miami,Miama-Dade County,FL,Open investigation,http://www.justice.gov/crt/about/spl/documents/miami_findings_7-9-13.pdf
-Newark,Essex County,NJ,Open investigation,http://www.justice.gov/crt/about/spl/documents/newark_findings_7-22-14.pdf
-Austin,Travis County,TX,Investigation closed,
-Escambia County,Escambia County,FL,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/escambia_taletter_9-4-12.pdf
-Harvey,Cook County,IL,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/harvey_TA_1-18-12.pdf
-Schenectady,Schenectady County,NY,Investigation closed,http://www.justice.gov/crt/about/spl/documents/schenectady_ta.pdf
-Inglewood,Los Angeles County,CA,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/inglewood_pd_Jail_findlet_12-28-09.pdf
-Detroit,Wayne County,MI,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/dpd/detroit_cover.php
-Beacon,Dutchess County,NY,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/beacon_settlement_12-23-10.pdf
-Yonkers,Westchester County,NY,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/YonkersPD_talet_06-09-09.pdf
-Lorain,Lorain County,OH,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/lorian_ta_5-16-12.pdf
-Warren,Trumbull County,OH,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/wpd_talet_3-2-06.pdf
-Easton,Northampton County,PA,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/easton_talet_11-26-07.pdf
-East Haven,New Haven,CT,Settlement Agreement,http://www.justice.gov/crt/about/spl/easthavenpd.php
-Washington,District of Columbia,DC,Settlement Agreement,http://www.justice.gov/crt/about/spl/documents/dcfindings.php
-Portland,Multnomah,OR,Settlement Agreement,http://www.justice.gov/crt/about/spl/documents/ppb_findings_9-12-12.pdf
-Seattle,King,WA,Settlement Agreement,http://www.justice.gov/crt/about/spl/seattlepd.php
-Baltimore,Baltimore city,MD,Open investigation,http://www.justice.gov/crt/about/spl/documents/Sharp_SOI_1-10-12.pdf
-New York,New York,NY,Open investigation,http://www.justice.gov/crt/about/spl/documents/padilla_soi_11-22-13.pdf
-Ferguson,St. Louis County,MO,Open investigation,
+Jurisdiction,County,State,FIPS,DoJ Status,URL
+St Louis,St Louis City,MO,29510,Voluntary Agreement,http://www.washingtonpost.com/blogs/federal-eye/wp/2014/09/05/five-facts-about-dojs-civil-rights-investigations-under-eric-holder/
+Las Vegas,Clark County,NV,32003,Voluntary Agreement,http://www.washingtonpost.com/blogs/federal-eye/wp/2014/09/05/five-facts-about-dojs-civil-rights-investigations-under-eric-holder/
+New Orleans,Orleans Parish,LA,22071,Consent Decree,http://www.justice.gov/crt/about/spl/nopd.php
+Puerto Rico,,PR,,Voluntary Agreement,http://www.justice.gov/crt/about/spl/pr.php
+Alamance County,Alamance County,NC,37001,Not Cooperating with Investigation,http://www.justice.gov/crt/about/spl/documents/acso_complaint_12-20-12.pdf
+Colorado City,Mohave County,AZ,04015,Complaint filed. Not Cooperating with Investigation,http://www.justice.gov/crt/about/spl/documents/coloradocity_complaint_6-21-12.pdf
+Maricopa County,Maricopa County,AZ,04013,Pattern or practice of unlawful discriminatory police conduct. Not Cooperating with Investigation,http://www.justice.gov/crt/about/spl/mcso.php
+Meridian,Lauderdale County,MS,28075,Not Cooperating,http://www.washingtonpost.com/blogs/federal-eye/wp/2014/09/05/five-facts-about-dojs-civil-rights-investigations-under-eric-holder/
+Albuquerque,Bernalillo County,NM,35001,Open investigation,http://www.justice.gov/crt/about/spl/documents/apd_findings_4-10-14.pdf
+Cleveland,Cuyahoga County,OH,39035,Open investigation,
+Miami,Miami-Dade County,FL,12086,Open investigation,http://www.justice.gov/crt/about/spl/documents/miami_findings_7-9-13.pdf
+Newark,Essex County,NJ,34013,Open investigation,http://www.justice.gov/crt/about/spl/documents/newark_findings_7-22-14.pdf
+Austin,Travis County,TX,48453,Investigation closed,
+Escambia County,Escambia County,FL,12033,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/escambia_taletter_9-4-12.pdf
+Harvey,Cook County,IL,17031,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/harvey_TA_1-18-12.pdf
+Schenectady,Schenectady County,NY,36093,Investigation closed,http://www.justice.gov/crt/about/spl/documents/schenectady_ta.pdf
+Inglewood,Los Angeles County,CA,06037,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/inglewood_pd_Jail_findlet_12-28-09.pdf
+Detroit,Wayne County,MI,26163,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/dpd/detroit_cover.php
+Beacon,Dutchess County,NY,36027,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/beacon_settlement_12-23-10.pdf
+Yonkers,Westchester County,NY,36119,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/YonkersPD_talet_06-09-09.pdf
+Lorain,Lorain County,OH,39093,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/lorian_ta_5-16-12.pdf
+Warren,Trumbull County,OH,39155,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/wpd_talet_3-2-06.pdf
+Easton,Northampton County,PA,42095,Technical Assistance,http://www.justice.gov/crt/about/spl/documents/easton_talet_11-26-07.pdf
+East Haven,New Haven,CT,09009,Settlement Agreement,http://www.justice.gov/crt/about/spl/easthavenpd.php
+Washington,District of Columbia,DC,11001,Settlement Agreement,http://www.justice.gov/crt/about/spl/documents/dcfindings.php
+Portland,Multnomah,OR,41051,Settlement Agreement,http://www.justice.gov/crt/about/spl/documents/ppb_findings_9-12-12.pdf
+Seattle,King,WA,53033,Settlement Agreement,http://www.justice.gov/crt/about/spl/seattlepd.php
+Baltimore,Baltimore city,MD,24510,Open investigation,http://www.justice.gov/crt/about/spl/documents/Sharp_SOI_1-10-12.pdf
+New York,New York,NY,36061,Open investigation,http://www.justice.gov/crt/about/spl/documents/padilla_soi_11-22-13.pdf
+Ferguson,St. Louis County,MO,29189,Open investigation,

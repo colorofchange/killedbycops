@@ -86,17 +86,13 @@
   stroke-width: 0;
   pointer-events: none;
 }
+.bubble circle.locked {
+  stroke: yellow;
+  stroke-width: 1px;
+}
 
 .state.active {
   fill: #ccc;
-}
-
-.bubble circle.active {
-  fill-opacity: 0.5;
-}
-.bubble circle.inactive {
-  fill-opacity: 0.05;
-  stroke-width: 0;
 }
 
 .bubble :hover {
