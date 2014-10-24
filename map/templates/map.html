@@ -199,15 +199,18 @@ function mergeData(error, us, fatalencounters, dojFocus) {
     .rollup(function(l) { return l.length; })
     .entries(fatalencounters.objects);
 
+  // ugly, but we already have state FIPS lookup in view
+  var stateFIPS = { {% for code in STATE_CODES %}{{code.1}}: '{{code.0}}',{%endfor%} };
+
   // merge with state geometry
   var usStates = topojson.feature(us, us.objects.states).features;
   killedbycops.states = _.map(killedbycops.states, function(state) {
       geom = _.find(usStates, function(g) { return g.id === state.key; } );
-      geom.properties.name = "";
       geom.properties.fatalencounters = {
         race: state.values,
         total: d3.sum(state.values, function(d) { return d.values; })
       };
+      geom.properties.name = stateFIPS[geom.id];
     return geom;
   });
 
@@ -307,10 +310,7 @@ function updateData(d) {
   if ((locked.node() !== null) && (d.id !== locked.data()[0].id)) {
     return;
   }
-
-  console.log(d.properties.fatalencounters.total);
-
-
+  
   var angles = pieLayout(d.properties.fatalencounters.race);
   //console.log(angles);
 

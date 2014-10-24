@@ -41,6 +41,9 @@
   font-size: 28px;
   margin:0;
 }
+#data h2 em {
+  color: #c00;
+}
 #data h3 {
   font-size: 24px;
   margin-top: 5px;
