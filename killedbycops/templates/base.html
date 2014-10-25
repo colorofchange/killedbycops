@@ -18,36 +18,27 @@
   <meta property="og:title" content="Follow @KilledByCops. In memory of those killed by law enforcement. Let's stop killer cops and address the nationwide crisis of police violence.">
   <meta property="og:description" content="https://s3.amazonaws.com/s3.colorofchange.org/images/killedbycops-stw.png">
 
-  <link rel="stylesheet" href="{% static 'css/coc_actionkit.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/killedbycops.css' %}" type="text/css">
 
   {%block styles%}{%endblock%}
 
 <html>
 <body>
-  <div id="wrapper" class="red_border">
-    <div id="header">
-        <div class="logo">
-          <h1><a href="http://colorofchange.org/">ColorOfChange.org changing the color of democracy</a></h1>
-        </div>
-        
+  <header>
+    <div class="logo">
+      <h1><a href="http://killedbycops.org/">KilledByCops</a></h1>
+    </div>    
+  </header>
+
+  <section id="content" class="clearfix">
+      {%block content%}{%endblock%}
+  </section>
+
+  <footer>
+    <div class="copyright">
+        &copy; 2014 ColorOfChange.org. <a href="http://colorofchange.org/about/copyright">Some rights reserved</a>
       </div>
-
-    <div id="content" class="clearfix">
-      <div id="wrapper_inner" class="clearfix">
-        {%block content%}{%endblock%}
-      </div>
-    </div>
-
-    <div id="footer">
-      <div class="wrapper_inner">
-        <div class="copyright">
-          <span class="creative_commons">c</span>2014 ColorOfChange.org. <a href="http://colorofchange.org/about/copyright">Some rights reserved</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
+  </footer>
 {%block scripts%}{%endblock%}
 </body>
 </html>

@@ -14,12 +14,12 @@
 <script src="{% static 'js/queue.v1.min.js' %}"></script>
 
 <script>
-var mapWidth = 640,
-    mapHeight = 480,
-    dataWidth = 250,
-    dataHeight = 250,
-    dataTitle = null, // template
-    dataBelow = null, // template
+var mapWidth = 960,
+    mapYOffset = 50,
+    mapHeight = 600 + mapYOffset,
+    dataTitle = null,
+    dataStats = null,
+    dataAction = null,
     active = d3.select(null), // selected state
     locked = d3.select(null), // selected county
     bubbles = d3.select(null),
@@ -37,20 +37,11 @@ var radius = d3.scale.sqrt()
     .domain([0, 1])
     .range([0, 3]);
 
-// pie charts for race breakdown
-var pieLayout = d3.layout.pie()
-    //.sort(null)
-    .value(function(d) { return d.values; });
-var pieArc = d3.svg.arc().outerRadius(100).innerRadius(0)
-
-// colors from coc menu, in order
-var raceColors = d3.scale.ordinal()
-    .range(['#f63','#c00','#9a679a','#ffcd32','#09C','#1D8B32']);
-
 // main svg object
 var mapSvg = d3.select("#map").append("svg")
-    .attr("width", mapWidth)
-    .attr("height", mapHeight)
+    .attr("preserveAspectRatio", "xMinYMin meet")
+    .attr("viewBox", "0 0 "+mapWidth+" "+mapHeight)
+    .classed("svg-content-responsive", true)
     .on("click", stopped, true);
 
 // zoom behavior
@@ -75,17 +66,6 @@ mapSvg
     //.call(zoom) // allow free zooming
     .call(zoom.event)
     .on('mouseout', initialData);
-
-var dataSvg = d3.select("#data .graph").append("svg")
-  .attr("width", dataWidth)
-  .attr("height", dataHeight);
-
-var dataGroup = dataSvg.append("g")
-    .style("stroke-width", "1.5px")
-    .attr("transform", "translate(" + dataWidth / 2 + "," + dataHeight / 2 + ")");
-//dataSvg.append('text')
-//    .text('Victims by Race')
-//    .attr("transform", "translate(" + (dataWidth / 2 - 40) + "," + (dataHeight - 10) + ")");
 
 function clickedState(d) {
   if (active.node() === this) { return resetZoom(); }
@@ -141,9 +121,10 @@ function resetZoom() {
 
   mapSvg.transition()
       .duration(1000)
-      .call(zoom.translate([0, 0]).scale(1).event);
+      .call(zoom.translate([0, mapYOffset]).scale(1).event);
 
   $('select[name="states"]').val(-1);
+  $('#data .stats').html('');
 }
 
 function zoomFunction() {
@@ -178,6 +159,7 @@ function mergeData(error, us, fatalencounters, dojFocus) {
   var usCounties = topojson.feature(us, us.objects.counties).features;
   killedbycops.counties = _.map(killedbycops.counties, function(county) {
       geom = _.find(usCounties, function(g) { return g.id === county.key; } );
+      geom.properties.type = "county";
       geom.properties.fatalencounters = {
         race: county.values,
         total: d3.sum(county.values, function(d) { return d.values; })
@@ -201,17 +183,18 @@ function mergeData(error, us, fatalencounters, dojFocus) {
     .entries(fatalencounters.objects);
 
   // ugly, but we already have state FIPS lookup in view
-  var stateFIPS = { {% for code in STATE_CODES %}{{code.1}}: '{{code.0}}',{%endfor%} };
+  var stateFIPS = { {% for code in STATE_CODES %}{{code.1}}: '{{code.0}}'{%if not forloop.last%},{%endif%}{%endfor%} };
 
   // merge with state geometry
   var usStates = topojson.feature(us, us.objects.states).features;
   killedbycops.states = _.map(killedbycops.states, function(state) {
       geom = _.find(usStates, function(g) { return g.id === state.key; } );
+      geom.properties.type = "state";
       geom.properties.fatalencounters = {
         race: state.values,
         total: d3.sum(state.values, function(d) { return d.values; })
       };
-      geom.properties.name = stateFIPS[geom.id];
+      geom.properties.name = stateFIPS[Number(geom.id)];
     return geom;
   });
 
@@ -232,7 +215,6 @@ function mergeData(error, us, fatalencounters, dojFocus) {
 }
 
 function drawMap(killedbycops) {
-
   // draw states
   mainGroup.selectAll("path")
       .data(killedbycops.states)
@@ -263,9 +245,12 @@ function drawMap(killedbycops) {
       .attr("r", function(d) {
         return radius(d.properties.fatalencounters.total);
       })
-      .on("mouseover", updateData)
-      .on("click", lockData);
+      .on("mouseover", updateData);
+      //.on("click", lockData);
 
+    mapSvg.transition()
+      .duration(0)
+      .call(zoom.translate([0, mapYOffset]).scale(1).event);
   initialData();
 }
 
@@ -278,77 +263,41 @@ function initialData() {
     // show national numbers
     $('#data .title').html(dataTitle({
       name: "2000-2014",
-      fatalencounters: {total: "over " + formatNumber(killedbycops.us.total)}
-    }));
-  } else {
-    d = active.data()[0];
-    $('#data .title').html(dataTitle({
-      name: d.properties.name,
-      fatalencounters: {total: formatNumber(d.properties.fatalencounters.total)}
+      killedbycops: {us: "over " + formatNumber(killedbycops.us.total)}
     }));
   }
-
-  var g = dataGroup.selectAll(".arc")
-      .data(pieLayout(killedbycops.us.race))
-    .enter().append("g")
-      .attr("class", "arc");
-
-    g.append("path")
-      .attr("d", pieArc )
-      .each(function(d) { this._current = d; }) // store the initial angles
-      .style("fill", function(d) { return raceColors(d.data.key); })
-      .append("title")
-        .text(function(d) {
-          var race = d.data.key == "" ? 'Unknown' : d.data.key;
-          return race+": "+d.data.values;
-        } );
-
-    $('#data .below').html('');
-
+ 
+  //$('#data .stats').html('');
+  $('#data .action').html('');
 }
 
 function updateData(d) {
   // if locked to a different d, don't update
-  if ((locked.node() !== null) && (d.id !== locked.data()[0].id)) {
+  // if ((locked.node() !== null) && (d.id !== locked.data()[0].id)) {
+  //   return;
+  // }
+
+  // only show data when we are zoomed in to a state
+  if(active.node == null) {
     return;
   }
 
-  var angles = pieLayout(d.properties.fatalencounters.race);
-  //console.log(angles);
+  // format d properties and fill in data template
+  dataHtml = dataStats({
+        name: d.properties.name.split(', ')[0], // drop state from "County, State"
+        d: {total: formatNumber(d.properties.fatalencounters.total)},
+  });
 
-  var g = dataGroup.selectAll('.arc')
-    .data(angles);
+  activeD = active.data()[0];
+  if(activeD.properties.type === "state" && d.properties.type !== 'state') {
+    dataHtml = dataStats({
+        name: activeD.properties.name.split(', ')[0],
+        d: {total: formatNumber(activeD.properties.fatalencounters.total)},
+    })+dataHtml;
+  }
 
-  // shouldn't need to add any, because initial load includes all categories from rollup
-  // g.enter().append("g")
-  //   .attr("class", "arc")
-  //   .attr("d", pieArc )
-  //   .each(function(d) { console.log("added",d); });
-
-  g.selectAll("path").transition()
-    .attr("d", pieArc);
-    // .each(function(d) { console.log("updated",d); });
-    
-  //g.exit().transition().remove();
-    
-  // tween gracefully
-  // .attrTween("d", function arcTween(a) {
-  //   console.log(a);
-  //   // tween by interpolating
-  //   var i = d3.interpolate(this._current, a);
-  //   this._current = i(0);
-  //   return function(t) {
-  //     return pieArc(i(t));
-  //   };
-  // }); // redraw the arcs
-
-  // format county info and fill in data template
-  outputTitle = _.extend({}, d.properties,
-    { name: d.properties.name.split(', ')[0], // drop state from "County, State"
-      fatalencounters: {total: formatNumber(d.properties.fatalencounters.total)},
-    });
-  $('#data .title').html(dataTitle(outputTitle));
-  $('#data .below').html(dataBelow({doj: d.properties.doj}));
+  $('#data .stats').html(dataHtml);
+  $('#data .action').html(dataAction({doj: d.properties.doj}));
 }
 
 function lockData(d) {
@@ -366,7 +315,8 @@ function lockData(d) {
 $(document).ready(function() {
   // compile data templates
   dataTitle = _.template($('script#data-title').html());
-  dataBelow = _.template($('script#data-below').html());
+  dataStats = _.template($('script#data-stats').html());
+  dataAction = _.template($('script#data-action').html());
 
   $('select[name="states"]').on('change', function() {
     var val = $('select[name="states"]').val();
@@ -374,8 +324,10 @@ $(document).ready(function() {
         active.classed("active", false);
         var state = mainGroup.selectAll("path").filter(function(d) { return Number(d.id) == val; });
         active = d3.select(state.node()).classed("active", true);
+        $('select[name="states"] option[val="-1"]').text('select one');
         zoomToState(state.data()[0]);
     } else {
+      $('select[name="states"] option[val="-1"]').text('National');
       resetZoom();
     }
 
@@ -386,12 +338,14 @@ $(document).ready(function() {
 
 {% verbatim %}
 <script type = "text/template" id="data-title">
-<h2>Killed By Cops:</h2>
-<h3><%= name %></h3>
-<h3><em><%= fatalencounters.total %></em></h3>
+<h2><%= killedbycops.us %> nationally 2000-2014</h2>
 </script>
 
-<script type = "text/template" id="data-below">
+<script type = "text/template" id="data-stats">
+<h2><%= d.total %> in  <%= name %></h2>
+</script>
+
+<script type = "text/template" id="data-action">
 <% if (typeof(doj) != "undefined") { %>
   <div class="doj">Federal Action: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></div>
 <% } %>
@@ -402,30 +356,29 @@ $(document).ready(function() {
 
 {%block content%}
 <div class="map_wrapper">
-  <h1>Geography of people killed by law enforcement </h1>
-  <h2>Where are people most likely to be killed by police?<br> Why isn't the government collecting this data?</h2>
-  <div id="d3">
-    <div id="map"></div>
-    <div id="data">
-      <div class="title"></div>
-      <div class="graph"></div>
-      <div class="below"></div>
-    </div>
-  </div>
+  <div id="data">
+    <div class="title"></div>
+    <div class="stats"></div>
+    <div class="action"></div>
+  </div>  
+  <div id="map"></div>
   <div id="controls">
-    <em>Click or select a state to zoom in</em>
+    <em>Click your state or </em>
     <select name="states">
-    <option value="-1"></option>
+    <option value="-1">select one</option>
     {% for code in STATE_CODES %}<option value="{{code.1}}">{{code.0}}</option>{%endfor%}
     </select>
   </div>
-  <p>
-    The Killed By Cops map is a project of ColorOfChange.org with data from FatalEncounters.org developed to visualize the crisis of violent policing and to call attention to the lack of a comprehensive, publicly-accessible, national database that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ, meaning that the dataset is largely incomplete and the lack of heated bubble areas is as result of the lack of available data and not because these areas are exempt from the epidemic of police violence and killings.
-  </p>
-  <ul id="sources">
-    <li>News Reports from 2000-2014 collected by <a href="http://www.fatalencounters.org">FatalEncounters.org</a></li>
-    <li>Conduct of Law Enforcement cases <a href="http://www.justice.gov/crt/about/spl/findsettle.php">Department of Justice</a>
-    <li>Mapping and data analysis by <a href="http://colorofchange.org">ColorOfChange.org</a></li>
-  </ul>
+  <div id="explanation">
+    <p>
+      This map visualizes the crisis of violent policing and calls attention to the lack of a comprehensive, publicly-accessible, national database that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ. The dataset is still incomplete and the lack incidents in an area dooes not because these it is exempt from the epidemic of police violence and killings.
+    </p>
+    <b>Sources:</b>
+    <ul id="sources">
+      <li><a href="http://www.fatalencounters.org">FatalEncounters.org</a></li>,
+      <li><a href="http://factfinder2.census.gov">US Census</a></li>,
+      <li><a href="http://www.justice.gov/crt/about/spl/findsettle.php">Department of Justice</a>
+    </ul>
+  </div>
 </div>
 {%endblock%}

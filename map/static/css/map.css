@@ -1,43 +1,41 @@
-#wrapper_inner {
-  width: 960px !important;
-  box-sizing:border-box;
-}
-
-.map_wrapper { 
-  background-color: #fff;
-  padding: 20px 15px;
-}
-
-.map_wrapper p {
-  padding-top: 15px;
-  margin-left: 0px;
-}
-
-.map_wrapper ul#sources {
+ul#sources {
   margin-left: 20px;
   padding-left: 0px;
   list-style-type: circle;
 }
 
+header {
+  z-index:10;
+  position:absolute;
+}
+
 #map {
-  display: block;
-  float: left;
-  width: 640px;
-  height: 480px;
-  margin-bottom: 10px;
+  display: inline-block;
+  width: 100%;
+  padding-bottom: 66%;
+  vertical-align: top;
+  overflow: hidden;
   cursor:zoom-in;
+  z-index:0;
+}
+
+.svg-content-responsive {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #data {
-  display:block;
-  float: left;
-  width: 250px;
-  height: 480px;
-  margin-left: 20px;
+  /* move up and next to logo */
+  position: absolute;
+  left: 350px;
+  top: 23px;
+  z-index: 10;
+  text-shadow:1px 1px white;
 }
 
 #data .title {
-  text-align:center;
 }
 #data h2 {
   font-size: 28px;
@@ -51,12 +49,27 @@
   color: #c00;
 }
 
-#data.below {
-  text-align: left;
+#data .action {
+  display: none;
 }
 
 #controls {
-  float: left;
+  float: right;
+  margin-right: 50px;
+  margin-bottom: 20px;
+}
+
+#explanation {
+  width:65%;
+}
+
+ul#sources {
+  display:inline-block;
+  margin-left:5px;
+}
+ul#sources li {
+  display:inline;
+  list-style-type:none;
 }
 
 .background {
@@ -92,11 +105,12 @@
   stroke: #fff;
   stroke-width: .5px;
   cursor:pointer;
-  pointer-events: all;
+  pointer-events: none; /* default no hover */
 }
 
 .bubble circle.active {
   fill-opacity: 0.5;
+  pointer-events: all; /* only in active states */
 }
 .bubble circle.inactive {
   fill-opacity: 0.05;

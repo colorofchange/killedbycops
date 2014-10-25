@@ -1,0 +1,96 @@
+/* Base Styles */
+
+body {
+  font: 12px Arial, "Helvetica Neue", Helvetica, sans-serif;
+  margin: 0 auto;
+  padding: 20px;
+  width: 100%;
+}
+
+/* End Base Styles */
+
+/* Typography Styles */
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+p {
+  margin: 0 0 13px;
+  clear:both;
+}
+
+p, a, h1, h2, h3, button {
+  font-family: "Helvetica Neue", helvetica;
+  text-decoration: none;
+}
+
+h1 {
+  font-size:38px;
+  line-height:36px;
+  font-weight:bold;
+  font-weight:200;
+  text-align:left;
+}
+
+h2 {
+  font-size:32px;
+  line-height:36px;
+  font-weight:bold;
+}
+
+p, ul {
+  font-size:12px;
+  line-height:18px;
+  text-align:left;
+}
+
+/* End Typography Styles */
+
+/* Form Styles */
+
+#ak-errors {
+  list-style:none;
+  color: #ff0000;
+}
+
+/* End Form Styles */
+
+/* Header Styles */
+
+header {
+  position:absolute;
+}
+
+header .logo h1 {
+  height: 68px;
+  display:block;
+  margin:0 auto;
+  padding-right:20px;
+}
+
+header .logo h1 a{
+  text-decoration:none;
+  display:block;
+  height: 100%;
+  text-transform: uppercase;
+  font-style:italic;
+  font-weight:bold;
+  color:black;
+  text-shadow: 1px 1px white;
+  /*text-indent:-9999px;*/ /* re-enable when we get a logo */
+}
+header .logo h1 a:visited { color:black; }
+header .logo h1 a:hover {
+  color:#c00;
+  text-shadow: 1px 1px black;
+}
+
+
+/* End Header Styles */
+
+section#content {
+}
