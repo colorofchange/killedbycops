@@ -17,7 +17,7 @@ class FatalEncounter(models.Model):
   name = models.CharField(max_length=255)
   age = models.IntegerField(null=True)
   gender = models.CharField(null=True, max_length=1, choices=(('M','Male'),('F','Female')))
-  race = models.CharField(null=True, max_length=10, choices=RACE_CHOICES)
+  race = models.CharField(null=True, max_length=100, choices=RACE_CHOICES)
   photo_url = models.URLField(blank=True, null=True, max_length=1000)
   date_of_injury = models.DateField(null=True)
   city = models.CharField(max_length=255, null=True)
