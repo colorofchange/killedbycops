@@ -9,7 +9,7 @@ from retrying import retry
 
 from tweets.api import twitter_api, twitter_geocode
 import tweepy
-from tweets.models import Tweet
+from tweets.models import Tweet, DoNotSend
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
@@ -24,6 +24,12 @@ class Command(BaseCommand):
             type=int,
             default=0,
             help='Skip ahead by number of tweets'),
+        make_option('--order',
+            action='store',
+            dest='tweet_order',
+            type=int,
+            default=None,
+            help='Post specific tweet order #'),
     )
 
     def handle(self, *args, **options):
@@ -41,8 +47,19 @@ class Command(BaseCommand):
                 status = twitter_api.update_status(**data)
             return status
 
-        tweet = Tweet.objects.filter(tweet_sent=False).order_by('order')[options['skip']]
+        if options['tweet_order']:
+            try:
+                tweet = Tweet.objects.get(tweet_sent=False, order=options['tweet_order'])
+            except Tweet.DoesNotExist:
+                print "tweet order",options['tweet_order'],' does not exist, or was already sent'
+        else:
+            tweet = Tweet.objects.filter(tweet_sent=False).order_by('order')[options['skip']]
         data = {'status': tweet.text_replace_placeholder()}
+
+        if DoNotSend.objects.filter(fatal_encounter=tweet.fatal_encounter).count():
+            print "do not send",tweet.fatal_encounter
+            tweet.delete()
+            sys.exit(-1)
 
         if options['geocode']:
             print "geocoding",

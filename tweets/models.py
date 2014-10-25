@@ -47,3 +47,7 @@ class Tweet(models.Model):
 
   def text_replace_placeholder(self):
     return self.text.replace('http://placeholder.url', 'http://act.colorofchange.org/sign/killedbycops_stw?source=killedbycops_twitter')
+
+class DoNotSend(models.Model):
+  fatal_encounter = models.OneToOneField(FatalEncounter)
+  reason = models.TextField()

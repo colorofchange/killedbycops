@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.forms.models import model_to_dict
 
 from fatalencounters.models import FatalEncounter
-from tweets.models import Tweet
+from tweets.models import Tweet, DoNotSend
 from tweets.lookup import AGENCY_ACRONYMS, IMAGE_ID_LOOKUP
 
 MAX_TWEET_LENGTH = 140
@@ -49,6 +49,10 @@ class Command(BaseCommand):
             i = 0
 
         for fe in encounters:
+            if DoNotSend.objects.filter(fatal_encounter=fe).count():
+                print "do not send tweet for", fe
+                continue
+
             if options['overwrite_existing']:
                 try:
                     tweet = fe.tweet
