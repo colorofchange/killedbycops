@@ -92,6 +92,7 @@ function zoomToState(d) {
   if (d.id == "25") { scaleFactor = 0.75; } //MA
   if (d.id == "09") { scaleFactor = 0.5; } //CT
   if (d.id == "44") { scaleFactor = 0.3; } //RI
+  if (d.id == "11") { scaleFactor = 0.2; } //DC
 
   //calculate zoom bounds
   var bounds = path.bounds(d),
@@ -359,7 +360,11 @@ $(document).ready(function() {
     <div class="title"></div>
     <div class="stats"></div>
     <div class="action"></div>
-  </div>  
+  </div> 
+  <div id="share">
+      <div class='sp_9967 sp_fb_small' ></div>
+      <div class='sp_9967 sp_tw_small' ></div>
+  </div>
   <div id="map"></div>
   <div id="controls">
     <em>Click your state or </em>
