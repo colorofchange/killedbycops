@@ -11,6 +11,7 @@
 <script src="{% static 'js/d3.js' %}"></script>
 <script src="{% static 'js/topojson.v1.min.js' %}"></script>
 <script src="{% static 'js/queue.v1.min.js' %}"></script>
+<script src="{% static 'js/spin.min.js' %}"></script>
 
 <script>
 var mapWidth = 960,
@@ -22,6 +23,7 @@ var mapWidth = 960,
     active = d3.select(null), // selected state
     locked = d3.select(null), // selected county
     bubbles = d3.select(null),
+    loading = null,
     killedbycops = {};
 
 var formatNumber = d3.format(",.0f");
@@ -108,7 +110,11 @@ function zoomToState(d) {
       .duration(750)
       .call(zoom.translate(translate).scale(scale).event);
 
+  // update data display
   updateData(d);
+
+  // send to analytics
+  ga('send', 'event', 'state', 'zoom', d.properties.name);
 }
 
 function resetZoom() {
@@ -251,6 +257,8 @@ function drawMap(killedbycops) {
     mapSvg.transition()
       .duration(0)
       .call(zoom.translate([0, mapYOffset]).scale(1).event);
+
+  loading.stop();
   initialData();
 }
 
@@ -298,6 +306,8 @@ function updateData(d) {
 
   $('#data .stats').html(dataHtml);
   $('#data .action').html(dataAction({doj: d.properties.doj}));
+  // send to analytics
+  ga('send', 'event', 'county', 'data', d.properties.name);
 }
 
 function lockData(d) {
@@ -313,6 +323,9 @@ function lockData(d) {
 }
 
 $(document).ready(function() {
+  loading = new Spinner().spin();
+  $('#map').append(loading.el);
+
   // compile data templates
   dataTitle = _.template($('script#data-title').html());
   dataStats = _.template($('script#data-stats').html());
@@ -330,7 +343,21 @@ $(document).ready(function() {
       $('select[name="states"] option[val="-1"]').text('National');
       resetZoom();
     }
+  });
 
+  $('.sp_fb_small').on('click', function() {
+    ga('send', 'social', {
+      'socialNetwork': 'facebook',
+      'socialAction': 'share',
+      'socialTarget': 'http://www.killedbycops.org'
+    });
+  });
+  $('.sp_tw_small').on('click', function() {
+    ga('send', 'social', {
+      'socialNetwork': 'twitter',
+      'socialAction': 'share',
+      'socialTarget': 'http://www.killedbycops.org'
+    });
   });
 });
 
