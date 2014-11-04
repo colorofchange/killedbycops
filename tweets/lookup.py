@@ -555,5 +555,21 @@ IMAGE_ID_LOOKUP = {
   "Nathaniel Cobbs":531,
   "Darin John Richardson":532,
   "Khazyier Pugh":533,
-  "Duane Brown":534
+  "Duane Brown":534,
+  #batch 2
+  "Jack Sun Keewatinawin":1,
+  "Andy Lopez":2,
+  "Adolfo Vargas Tovar":3,
+  "Angel Miguel Lopez":4,
+  'Bernie Cervantes "Chino" Villegas':5,
+  "Carlos Carrillo":6,
+  "Christopher Jonathan Gonzales":7,
+  "David Miguel Ventura":8,
+  "Denis John Chabot":9,
+  "Denny Gonzales":10,
+  "Eliseo Mercado":11,
+  "Eric Marquez":12,
+  "Esau Marin":13,
+  "Husien Shehada":14,
+  "Joel Acevedo":15,
 }

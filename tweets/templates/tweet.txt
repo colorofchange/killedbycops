@@ -1,1 +1,1 @@
-{{name.strip|safe}} - {{age}}, killed by {{agency_responsible.strip|safe}} on {{date_of_injury|date:"m/d/Y"}} #KilledByCops http://placeholder.url
+{{name.strip|safe}} {% if age%}- {{age}}{%endif%}, killed by {{agency_responsible.strip|safe}} on {{date_of_injury|date:"m/d/Y"}} #KilledByCops http://placeholder.url
