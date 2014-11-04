@@ -40,5 +40,8 @@ def twitter_geocode(city, state):
         return False
 
     location = geocode("%s, %s" % (city, state))
-    twitter_location = reverse_geocode(location.latitude, location.longitude)
-    return twitter_location.ids()[0]
+    if location:
+      twitter_location = reverse_geocode(location.latitude, location.longitude)
+      return twitter_location.ids()[0]
+    else:
+      return None
