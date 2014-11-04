@@ -111,7 +111,8 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 COMPRESS_ENABLED = False
 #TODO, figure out compress and heroku
 
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, "templates"),)
+import django
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, "templates"), os.path.dirname(django.__file__))
 
 try:
     from settings_local import *
