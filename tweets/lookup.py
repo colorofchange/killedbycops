@@ -1115,4 +1115,5 @@ IMAGE_ID_LOOKUP = {
   # 'Stephen Patrick Griffin': '',
   # 'John Anderson': '',
   # 'Ross Harrison Stewart': ''
+  'Thomas Higginbotham':'Higginbotham'
 }
