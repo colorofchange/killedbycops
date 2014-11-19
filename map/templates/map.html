@@ -270,7 +270,7 @@ function initialData() {
   }
  
   //$('#data .stats').html('');
-  $('#data .action').html('');
+  $('#action .federal').html('<h2>no Federal data</h2><h2>no Federal action</h2>');
 }
 
 function updateData(d) {
@@ -299,7 +299,7 @@ function updateData(d) {
   }
 
   $('#data .stats').html(dataHtml);
-  $('#data .action').html(dataAction({doj: d.properties.doj}));
+  $('#action .federal').html(dataAction({doj: d.properties.doj}));
   // send to analytics
   ga('send', 'event', 'county', 'data', d.properties.name);
 }
@@ -376,7 +376,7 @@ $(document).ready(function() {
 
 {% verbatim %}
 <script type = "text/template" id="data-title">
-<h2><%= killedbycops.us %> nationally 2000-2014</h2>
+<h2><%= killedbycops.us %> nationally</h2>
 </script>
 
 <script type = "text/template" id="data-stats">
@@ -385,11 +385,19 @@ $(document).ready(function() {
 
 <script type = "text/template" id="data-action">
 <% if (typeof(doj) != "undefined") { %>
-  <div class="doj">Federal Action: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></div>
+  <h2>no Federal data</h2>
+  <h2>Federal action: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></h2>
+<% } else { %>
+  <h2>no Federal data</h2>
+  <h2>no Federal action</h2>
 <% } %>
 </script>
 {% endverbatim %}
 
+{%endblock%}
+
+{% block header_secondline %}
+<h2>2000-2014</h2>
 {%endblock%}
 
 {%block content%}
@@ -407,8 +415,11 @@ $(document).ready(function() {
   <div id="data">
     <div class="title"></div>
     <div class="stats"></div>
-    <div class="action"></div>
   </div> 
+  <div id="action">
+    <div class="federal"></div>
+    <div class="petition"></div>
+  </div>
   <div id="share">
       <div class='sp_9967 sp_fb_small' ></div>
       <div class='sp_9967 sp_tw_small' ></div>

@@ -50,10 +50,24 @@ header {
   color: #c00;
 }
 
-#data .action {
-  display: none;
+#action {
+  position: absolute;
+  left: 650px;
+  top: 23px;
+  z-index: 10;
+  text-shadow:1px 1px white;
 }
-
+#action h2 {
+  font-size: 26px;
+  margin:0;
+}
+#action h3 {
+  font-size: 24px;
+  margin-top: 5px;
+}
+#action h3 em {
+  color: #c00;
+}
 #share {
   position:absolute;
   right: 20px;

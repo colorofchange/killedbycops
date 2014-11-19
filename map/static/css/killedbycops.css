@@ -66,7 +66,6 @@ header {
 }
 
 header .logo h1 {
-  height: 68px;
   display:block;
   margin:0 auto;
   padding-right:20px;
@@ -89,6 +88,9 @@ header .logo h1 a:hover {
   text-shadow: 1px 1px black;
 }
 
+header .logo h2 {
+  margin: 0;
+}
 
 /* End Header Styles */
 
