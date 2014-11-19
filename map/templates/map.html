@@ -12,6 +12,7 @@
 <script src="{% static 'js/topojson.v1.min.js' %}"></script>
 <script src="{% static 'js/queue.v1.min.js' %}"></script>
 <script src="{% static 'js/spin.min.js' %}"></script>
+<script src="{% static 'js/jquery.lightbox_me.js' %}"></script>
 
 <script>
 var mapWidth = 960,
@@ -141,13 +142,6 @@ function zoomFunction() {
 function stopped() {
   if (d3.event.defaultPrevented) d3.event.stopPropagation();
 }
-
-// load data files asynchronously
-queue()
-    .defer(d3.json, "{% static 'data/us.json' %}")
-    .defer(d3.json, "{% static 'data/fatalencounters.json' %}")
-    .defer(d3.csv, "{% static 'data/doj_focus.csv' %}")
-    .await(mergeData);
 
 function mergeData(error, us, fatalencounters, dojFocus) {
   if (error) return console.error(error);
@@ -323,14 +317,31 @@ function lockData(d) {
 }
 
 $(document).ready(function() {
+  // show introductory overlay
+  $('#introduction.overlay').lightbox_me({
+    centered: true,
+    overlayCSS: { background: 'black', 
+                  opacity: 0.75
+                }
+  });
+
+  // map loading spinner
   loading = new Spinner().spin();
   $('#map').append(loading.el);
+
+  // load data files asynchronously
+  queue()
+      .defer(d3.json, "{% static 'data/us.json' %}")
+      .defer(d3.json, "{% static 'data/fatalencounters.json' %}")
+      .defer(d3.csv, "{% static 'data/doj_focus.csv' %}")
+      .await(mergeData);
 
   // compile data templates
   dataTitle = _.template($('script#data-title').html());
   dataStats = _.template($('script#data-stats').html());
   dataAction = _.template($('script#data-action').html());
 
+  // dropdown state selector
   $('select[name="states"]').on('change', function() {
     var val = $('select[name="states"]').val();
     if (val !== "-1") {
@@ -369,7 +380,7 @@ $(document).ready(function() {
 </script>
 
 <script type = "text/template" id="data-stats">
-<h2><%= d.total %> in  <%= name %></h2>
+<h2><%= d.total %> reported in  <%= name %></h2>
 </script>
 
 <script type = "text/template" id="data-action">
@@ -382,6 +393,16 @@ $(document).ready(function() {
 {%endblock%}
 
 {%block content%}
+<div id="introduction" class="overlay">
+<h1>KilledByCops</h1>
+<p>
+    This map visualizes the <b>crisis of violent policing</b> and calls attention to the <b>lack of a comprehensive, publicly-accessible, national database</b> that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ. The dataset is still incomplete and the lack of incidents in an area does not mean is exempt from the epidemic of police violence and killings.
+</p>
+<p>
+    A project of ColorOfChange.org
+</p>
+</div>
+
 <div class="map_wrapper">
   <div id="data">
     <div class="title"></div>
@@ -401,9 +422,6 @@ $(document).ready(function() {
     </select>
   </div>
   <div id="explanation">
-    <p>
-      This map visualizes the crisis of violent policing and calls attention to the lack of a comprehensive, publicly-accessible, national database that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ. The dataset is still incomplete and the lack of incidents in an area does not mean is exempt from the epidemic of police violence and killings.
-    </p>
     <b>Sources:</b>
     <ul id="sources">
       <li><a href="http://www.fatalencounters.org">FatalEncounters.org</a></li>,
