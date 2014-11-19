@@ -351,10 +351,12 @@ function lockData(d) {
 
 function showStorify(d) {
   if (d.properties.storify) {
-    console.log(d.properties);
+    var url = d.properties.storify.url;
+    url = "//storify.com/ColorOfChange/we-must-stop-alec-a-rally-for-trayvon-martin/"; // temp
+    url = url + "embed" + "?header=false";
     $('#storify')
-      .html('<iframe src="'+d.properties.storify.url+'" frameborder="0"></iframe>')
-      .lightbox_me();
+      .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"</iframe>')
+      .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
   }
 }
 
@@ -362,9 +364,7 @@ $(document).ready(function() {
   // show introductory overlay
   $('#introduction.overlay').lightbox_me({
     centered: true,
-    overlayCSS: { background: 'black', 
-                  opacity: 0.75
-                }
+    overlayCSS: { background: 'black', opacity: 0.75 }
   });
 
   // map loading spinner
@@ -421,6 +421,10 @@ $(document).ready(function() {
     scaleRaw();
     $('a#scale span').text('population');
   });
+
+  $('#introduction button#close').click(function() {
+    $('#introduction').trigger('close');
+  })
 });
 
 </script>
@@ -458,9 +462,10 @@ $(document).ready(function() {
 <p>
     This map visualizes the <b>crisis of violent policing</b> and calls attention to the <b>lack of a comprehensive, publicly-accessible, national database</b> that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because  local police departments are not required to report this data to the Department of Justice. The dataset is still incomplete and the lack of incidents in an area does not mean is exempt from the epidemic of police violence and killings.
 </p>
-<p>
+<p><button href="" id="close">&times; Click to close</button></p>
+<em>
     A project of ColorOfChange.org
-</p>
+</em>
 </div>
 
 <div class="map_wrapper">

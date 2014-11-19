@@ -111,6 +111,10 @@ ul#sources li {
   list-style-type:none;
 }
 
+#storify iframe {
+  width: 600px;
+}
+
 .background {
   fill: #fff;
   pointer-events: all;
