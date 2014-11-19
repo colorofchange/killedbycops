@@ -209,8 +209,6 @@ function mergeData(error, us, fatalencounters, dojFocus) {
     .entries(fatalencounters.objects);
   killedbycops.us.total = d3.sum(killedbycops.us.race, function(d) { return d.values; });
 
-  console.log(killedbycops);
-
   return drawMap(killedbycops);
 }
 
@@ -244,6 +242,10 @@ function drawMap(killedbycops) {
       })
       .attr("r", function(d) {
         return radius(d.properties.fatalencounters.total);
+      })
+      .attr("class", function(d) {
+        if(d.properties.doj) { return "doj"; }
+        else { return ""; }
       })
       .on("mouseover", updateData);
       //.on("click", lockData);

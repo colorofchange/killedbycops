@@ -89,7 +89,9 @@ header .logo h1 a:hover {
 }
 
 header .logo h2 {
+  text-align: right;
   margin: 0;
+  padding-right: 20px;
 }
 
 /* End Header Styles */

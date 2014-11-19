@@ -132,12 +132,15 @@ ul#sources li {
 }
 
 .bubble {
-  fill: #C70000;
+  fill: #E41A1C;
   fill-opacity: .5;
   stroke: #fff;
   stroke-width: .5px;
   cursor:pointer;
   pointer-events: none; /* default no hover */
+}
+.bubble circle.doj {
+  fill: #6A3D9A;
 }
 
 .bubble circle.active {
