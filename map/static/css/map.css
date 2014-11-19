@@ -128,7 +128,7 @@ ul#sources li {
 }
 .state.active {
   fill: #aaa;
-  cursor:default;
+  cursor:zoom-out;
 }
 
 .border {
@@ -143,13 +143,17 @@ ul#sources li {
   fill-opacity: .5;
   stroke: #fff;
   stroke-width: .5px;
-  cursor:pointer;
+  cursor: default;
   pointer-events: none; /* default no hover */
 }
 .bubble circle.doj {
   fill: #6A3D9A;
+  cursor:pointer;
 }
-
+.bubble circle.storify {
+  fill: black;
+  cursor:pointer;
+}
 .bubble circle.active {
   fill-opacity: 0.5;
   pointer-events: all; /* only in active states */
@@ -160,12 +164,12 @@ ul#sources li {
   pointer-events: none;
 }
 .bubble circle.locked {
-  stroke: yellow;
+  stroke: #000;
   stroke-width: 1px;
 }
 
 .bubble :hover {
-  stroke: #000;
+  stroke: #1e1e1e;
 }
 
 .legend circle {

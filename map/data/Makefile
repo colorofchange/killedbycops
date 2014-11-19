@@ -1,10 +1,11 @@
 all: static
 
 #copy to static directory
-static: us.json fatalencounters.json doj_focus.csv
+static: us.json fatalencounters.json doj_focus.csv stories.csv
 	cp fatalencounters.json ../static/data/fatalencounters.json
 	cp us.json ../static/data/us.json
 	cp doj_focus.csv ../static/data/doj_focus.csv
+	cp stories.csv ../static/data/stories.csv
 
 clean:
 	rm -rf -- *.json build
@@ -18,6 +19,9 @@ fatalencounters.json:
 #and from google spreadsheet
 doj_focus.csv:
 	curl -o doj_focus.csv 'https://docs.google.com/spreadsheets/d/15pagGIf7Lc0-wE98jhcMB9bliTDvQD31eeVDzKQEOzg/pub?output=csv'
+
+stories.csv:
+	curl -o stories.csv 'https://docs.google.com/spreadsheets/d/1OhT2Cc0-9KFBAECTaBgTyBEJQgKokXfaEpbs6GkiRlU/pub?output=csv'
 
 #US Census shapefiles
 build/gz_2010_us_050_00_20m.shp: build/gz_2010_us_050_00_20m.zip
