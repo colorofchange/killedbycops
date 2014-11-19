@@ -93,6 +93,7 @@ header .logo h2 {
   margin: 0;
   padding-right: 20px;
   font-size: 26px;
+  text-shadow: 1px 1px white;
 }
 
 /* End Header Styles */

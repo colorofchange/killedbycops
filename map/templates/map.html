@@ -414,7 +414,7 @@ $(document).ready(function() {
 
 <script type = "text/template" id="data-stats">
 <h2><%= d.total %> reported in  <%= name %></h2>
-<% if (typeof(population) != "undefined" && population != NaN ) { %> <h2>population <%= population %></h2> <% } %>
+<% if (typeof(population) != "undefined" && population != "NaN" ) { %> <h2>population <%= population %></h2> <% } %>
 </script>
 
 <script type = "text/template" id="data-action">
