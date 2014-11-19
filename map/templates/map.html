@@ -36,8 +36,9 @@ var path = d3.geo.path()
 
 // radius of county bubbles is scaled on sqrt, for area comparisons
 var radius = d3.scale.sqrt()
-    .domain([0, 1])
-    .range([0, 3]);
+    .domain([0, 150]) // for total fatal encounters
+    .range([0, 30]);
+
 
 // main svg object
 var mapSvg = d3.select("#map").append("svg")
@@ -235,8 +236,9 @@ function drawMap(killedbycops) {
         .sort(function(a, b) {
           return (b.properties.fatalencounters.total - a.properties.fatalencounters.total);;
          })
-      )
-    .enter().append("circle")
+      );
+
+  bubbles.enter().append("circle")
       .attr("transform", function(d) {
         return "translate(" + path.centroid(d) + ")";
       })
@@ -250,12 +252,31 @@ function drawMap(killedbycops) {
       .on("mouseover", updateData);
       //.on("click", lockData);
 
-    mapSvg.transition()
-      .duration(0)
-      .call(zoom.translate([0, mapYOffset]).scale(1).event);
+  mapSvg.transition()
+    .duration(0)
+    .call(zoom.translate([0, mapYOffset]).scale(1).event);
 
   loading.stop();
   initialData();
+}
+
+function scalePopulation() {
+  radius.domain([0, 0.5]); // for total fatal encounters per 1000 population
+    
+  bubbles
+    .transition()
+    .attr("r", function(d) {
+      return radius(d.properties.fatalencounters.total / d.properties.population * 1000);
+    });
+}
+
+function scaleRaw() {
+ radius.domain([0, 200]); // for total fatal encounters
+ bubbles
+    .transition()
+    .attr("r", function(d) {
+      return radius(d.properties.fatalencounters.total);
+    });
 }
 
 function initialData() {
@@ -289,14 +310,16 @@ function updateData(d) {
   // format d properties and fill in data template
   dataHtml = dataStats({
         name: d.properties.name.split(', ')[0], // drop state from "County, State"
-        d: {total: formatNumber(d.properties.fatalencounters.total)},
+        d: { total: formatNumber(d.properties.fatalencounters.total) },
+        population: formatNumber(d.properties.population) 
   });
 
+  // active stores zoomed state
   activeD = active.data()[0];
   if(activeD.properties.type === "state" && d.properties.type !== 'state') {
     dataHtml = dataStats({
         name: activeD.properties.name.split(', ')[0],
-        d: {total: formatNumber(activeD.properties.fatalencounters.total)},
+        d: { total: formatNumber(activeD.properties.fatalencounters.total)},
     })+dataHtml;
   }
 
@@ -372,6 +395,14 @@ $(document).ready(function() {
       'socialTarget': 'http://www.killedbycops.org'
     });
   });
+
+  $('a#scale').toggle(function() {
+    scalePopulation();
+    $('a#scale span').text('total');
+  }, function() {
+    scaleRaw();
+    $('a#scale span').text('population');
+  });
 });
 
 </script>
@@ -383,6 +414,7 @@ $(document).ready(function() {
 
 <script type = "text/template" id="data-stats">
 <h2><%= d.total %> reported in  <%= name %></h2>
+<% if (typeof(population) != "undefined" && population != NaN ) { %> <h2>population <%= population %></h2> <% } %>
 </script>
 
 <script type = "text/template" id="data-action">
@@ -404,9 +436,9 @@ $(document).ready(function() {
 
 {%block content%}
 <div id="introduction" class="overlay">
-<h1>KilledByCops</h1>
+<h1>#KeepTrack Map</h1>
 <p>
-    This map visualizes the <b>crisis of violent policing</b> and calls attention to the <b>lack of a comprehensive, publicly-accessible, national database</b> that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because many local police departments are not required to report this data to the DOJ. The dataset is still incomplete and the lack of incidents in an area does not mean is exempt from the epidemic of police violence and killings.
+    This map visualizes the <b>crisis of violent policing</b> and calls attention to the <b>lack of a comprehensive, publicly-accessible, national database</b> that tracks deadly encounters with police. The data is crowdsourced by FatalEncounters because  local police departments are not required to report this data to the Department of Justice. The dataset is still incomplete and the lack of incidents in an area does not mean is exempt from the epidemic of police violence and killings.
 </p>
 <p>
     A project of ColorOfChange.org
@@ -433,6 +465,7 @@ $(document).ready(function() {
     <option value="-1">select one</option>
     {% for code in STATE_CODES %}<option value="{{code.1}}">{{code.0}}</option>{%endfor%}
     </select>
+    <a href="#" id="scale">Scale by <span>population</span></a>
   </div>
   <div id="explanation">
     <b>Sources:</b>
