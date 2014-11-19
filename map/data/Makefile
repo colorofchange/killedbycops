@@ -28,11 +28,11 @@ build/gz_2010_us_050_00_20m.zip:
 	mkdir -p $(dir $@)
 	curl -o $@ http://www2.census.gov/geo/tiger/GENZ2010/gz_2010_us_050_00_20m.zip
 
-build/counties.json: build/gz_2010_us_050_00_20m.shp ACS_12_5YR_B01003.csv
+build/counties.json: build/gz_2010_us_050_00_20m.shp ACS_13_3YR_B01003.csv
 	topojson \
 		-o $@ \
 		--id-property='STATE+COUNTY,Id2' \
-		--external-properties=ACS_12_5YR_B01003.csv \
+		--external-properties=ACS_13_3YR_B01003.csv \
 		--properties='name=Geography,population=+d.properties["Estimate; Total"]' \
 		--projection='width = 960, height = 600, d3.geo.albersUsa() \
 			.scale(1280) \
