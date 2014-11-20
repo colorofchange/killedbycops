@@ -181,7 +181,7 @@ function mergeData(error, us, fatalencounters, dojFocus, stories) {
     var c = _.find(killedbycops.counties, function(d) {
       return d.id === s.FIPS;
     });
-    if (c) { c.properties.storify = {url: s['URL']}; }
+    if (c) { c.properties.storify = {name: s['Name'], url: s['URL'] } }
   });
 
   // rollup state numbers by race, and sum
@@ -258,7 +258,10 @@ function drawMap(killedbycops) {
       .on("mouseover", updateData)
       .on("click", lockData);
 
-  bubbles.filter(".storify").on("click", showStorify);
+  bubbles.filter(".storify")
+    .append("svg:title")
+      .text(function(d) { return "Click for the story of "+d.properties.storify.name; } )
+    .on("click", showStorify);
 
   mapSvg.transition()
     .duration(0)
@@ -269,12 +272,15 @@ function drawMap(killedbycops) {
 }
 
 function scalePopulation() {
-  radius.domain([0, 0.5]); // for total fatal encounters per 1000 population
-    
+  radius.domain([0, 0.5]); // for fatal encounters per 1000 population
   bubbles
     .transition()
     .attr("r", function(d) {
-      return radius(d.properties.fatalencounters.total / d.properties.population * 1000);
+      if (d.properties.population) {
+        return radius(d.properties.fatalencounters.total / d.properties.population * 1000);
+      } else {
+        return radius(0);
+      }
     });
 }
 
@@ -497,6 +503,7 @@ $(document).ready(function() {
       <li><a href="http://factfinder2.census.gov">US Census</a></li>,
       <li><a href="http://www.justice.gov/crt/about/spl/findsettle.php">Department of Justice</a>
     </ul>
+    <br>Add missing data at <a href="http://www.fatalencounters.org/google-form/" target="_blank">FatalEncounters.org</a>
   </div>
   <div id="storify"></div>
 </div>
