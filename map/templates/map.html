@@ -371,6 +371,12 @@ function showStorify(d) {
   }
 }
 
+function showComments(error, comments) {
+  _.each(comments, function(c) {
+    $('ul#comments').append(memberComment(c));
+  });
+}
+
 $(document).ready(function() {
   // show introductory overlay
   $('#introduction.overlay').lightbox_me({
@@ -394,6 +400,12 @@ $(document).ready(function() {
   dataTitle = _.template($('script#data-title').html());
   dataStats = _.template($('script#data-stats').html());
   dataAction = _.template($('script#data-action').html());
+  memberComment = _.template($('script#member-comment').html());
+
+  // load member comments
+  queue()
+    .defer(d3.csv, "{% static 'data/comments.csv' %}")
+    .await(showComments);
 
   // dropdown state selector
   $('select[name="states"]').on('change', function() {
@@ -410,6 +422,7 @@ $(document).ready(function() {
     }
   });
 
+  // share event tracking
   $('.sp_fb_small').on('click', function() {
     ga('send', 'social', {
       'socialNetwork': 'facebook',
@@ -425,6 +438,7 @@ $(document).ready(function() {
     });
   });
 
+  // toggle scale button
   $('a#scale').toggle(function() {
     scalePopulation();
     $('a#scale span').text('total');
@@ -435,7 +449,7 @@ $(document).ready(function() {
 
   $('#introduction button#close').click(function() {
     $('#introduction').trigger('close');
-  })
+  });
 });
 
 </script>
@@ -458,6 +472,10 @@ $(document).ready(function() {
   <h2>no Federal data</h2>
   <h2>no Federal action</h2>
 <% } %>
+</script>
+
+<script type="text/template" id="member-comment">
+<li><b><%= first_name %> <%= last_name[0].toUpperCase() %> in <%= city %> <%= state %> said:</b> <%- comment %></li>
 </script>
 {% endverbatim %}
 
@@ -516,14 +534,17 @@ $(document).ready(function() {
   </div>
 
   <div id="petition">
-    <h2>Sign the Petition</h2>
+    <h2>Enough! Take Action</h2>
     <div class="statement">
-      <p>Tell the FBI and Department of Justice keep track of police killings. You can add a personal comment using the box provided.</p>
+      <p>Tell the FBI and Department of Justice keep track of police killings. Add a personal comment using the box provided.</p>
     </div>
     {% include "petition.html" with ak_page='keep_track' ak_source='map' %}
   </div>
 
-  <div id="comments"></div>
+  <div id="members">
+    <h2>What are we Saying?</h2>
+    <ul id="comments"></ul>
+  </div>
 
   <div id="storify"></div>
 </div>

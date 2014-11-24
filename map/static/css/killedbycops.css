@@ -102,14 +102,21 @@ section#content {
 }
 
 #petition {
-  width:30%;
+  width: 30%;
   float: left;
   clear: left;
   margin-top: 20px;
 }
 
+#members {
+  float: left;
+  width: 60%;
+  margin-left: 20px;
+}
+
 /* Footer Styles */
 footer {
+  margin-top: 20px;
   clear:both;
 }
 /* End Footer */
