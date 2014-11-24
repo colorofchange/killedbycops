@@ -1,0 +1,96 @@
+#petition {
+  background: #EEEEEE;
+  padding: 15px 15px;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px; 
+}
+
+
+#petition .disclaimer p {
+  font-size: 10px;
+}
+
+#petition .statement {
+  padding: 15px;
+  margin: 0 0 15px;
+  font-family: "Georgia", serif;
+}
+#petition .statement .lead-in p {
+  color: #666666;
+  font-size: 14px;
+}
+#petition .statement p {
+  color: #333333;
+  font-size: 12px;
+}
+
+#petition #ak-errors {
+  color: #FF0000;
+}
+
+#petition #unknown_user ul, #petition #petition_extra_fields ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#petition label {
+  display: none;
+}
+
+#petition input[type="text"], #petition input[type="email"], #petition input[type="tel"], #petition textarea, #petition select {
+  width: 100%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  font-size: 14px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border: 1px solid #CCCCCC;
+  padding: 6px 8px;
+}
+
+#petition select {
+  width: 98%;
+  height: 39px;
+  -webkit-appearance: none;
+  vertical-align: middle;
+  background: #FFFFFF url(https://s3.amazonaws.com/s3.colorofchange.org/images/select_arrow.png) no-repeat center right;
+}
+
+#petition #country_drop_down {
+  display: none;
+}
+
+#petition .not_in_us, #petition #country_drop_down .info {
+  display: block;
+  width: 98%;
+  text-align: right;
+  font-size: 11px;
+  margin: 2px 0 7px;
+}
+
+#petition #known_user {
+  margin: 0 0 5px;
+}
+
+#petition .content textarea {
+  height: 60px;
+}
+
+.red-button {
+  background: #d50000;
+  color: #FFFFFF;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  font-size: 18px;
+  text-transform: uppercase;
+  font-weight: normal;
+  border: none;
+  padding: 5px 15px;
+  font-family: "din-condensed-web",sans-serif;
+}

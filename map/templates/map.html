@@ -3,6 +3,8 @@
 
 {%block styles%}
 <link rel="stylesheet" href="{% static 'css/map.css'%}" type="text/css">
+<link rel="stylesheet" href="https://act.colorofchange.org/resources/actionkit.css">
+<link rel="stylesheet" href="{% static 'css/petition.css'%}" type="text/css">
 {%endblock%}
 
 {%block scripts%}
@@ -13,6 +15,9 @@
 <script src="{% static 'js/queue.v1.min.js' %}"></script>
 <script src="{% static 'js/spin.min.js' %}"></script>
 <script src="{% static 'js/jquery.lightbox_me.js' %}"></script>
+
+<script src="https://act.colorofchange.org/samples/actionkit.js"></script>
+<script src="{% static 'js/ak_petition.js' %}"></script>
 
 <script>
 var mapWidth = 960,
@@ -466,13 +471,13 @@ $(document).ready(function() {
 <div id="introduction" class="overlay">
 <h1>#KeepTrack Map</h1>
 <p>
-    The tragic police killing of Mike Brown in Ferguson, MO exposed the nationwide crisis of violent militarized policing to the world. But <em>how often, when, where and under what circumstances</em> do these tragic incidents occur? According to the FBI, that number is approximately 400 per year. But their data only includes self-reported information from less than 750 of the more than 17,000 law enforcement agencies in the US. There could be thousands more killed each year, but because law enforcement agencies aren't required to report police killings, <b>no one knows</b> how many people are killed by police officers each year.
+    The tragic police killing of Mike Brown in Ferguson, MO exposed the nationwide crisis of violent militarized policing to the world. But <em>how often, when, where and under what circumstances</em> do these tragic incidents occur? According to the FBI, that number is approximately 400 per year. But their data only includes self-reported information from less than 750 of the more than 17,000 law enforcement agencies in the US. There could be thousands more killed each year, but <b>because law enforcement agencies aren't required to report police killings, no one knows how many people are killed by police officers each year.</b>
 </p>
 <p>
-    KilledByCops is an interactive map that chronicles and visualizes the crisis of nationwide police killings. The data is crowdsourced from FatalEncounters.org because the FBI's data is notoriously unreliable. Since the KilledByCops map is crowdsourced some counties are missing data. The lack of available data isn't an exemption from the epidemic of police violence and killings.
+    KilledByCops is an interactive map that chronicles and visualizes the crisis of nationwide police killings. The data is crowdsourced from FatalEncounters.org because the FBI's data is notoriously unreliable. Since the KilledByCops map is crowdsourced some counties are missing data. <b>But the lack of available data doesn't exempt any particular county from the epidemic of police violence and killings it only means that federal officials need to do a better job of keeping track of this data.</b>
 </p>
-<p><button href="" id="close">&times; Click to close</button></p>
-<em>
+<p style="text-align:center;"><button href="" id="close" class="red-button">Click to continue</button></p>
+<em style="float:right;">
     A project of ColorOfChange.org
 </em>
 </div>
@@ -509,6 +514,17 @@ $(document).ready(function() {
     </ul>
     <br>Add missing data at <a href="http://www.fatalencounters.org/google-form/" target="_blank">FatalEncounters.org</a>
   </div>
+
+  <div id="petition">
+    <h2>Sign the Petition</h2>
+    <div class="statement">
+      <p>Tell the FBI and Department of Justice keep track of police killings. You can add a personal comment using the box provided.</p>
+    </div>
+    {% include "petition.html" with ak_page='keep_track' ak_source='map' %}
+  </div>
+
+  <div id="comments"></div>
+
   <div id="storify"></div>
 </div>
 {%endblock%}

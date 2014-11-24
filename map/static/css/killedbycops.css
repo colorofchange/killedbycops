@@ -101,6 +101,13 @@ header .logo h2 {
 section#content {
 }
 
+#petition {
+  width:30%;
+  float: left;
+  clear: left;
+  margin-top: 20px;
+}
+
 /* Footer Styles */
 footer {
   clear:both;
