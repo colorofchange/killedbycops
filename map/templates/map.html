@@ -461,13 +461,13 @@ $(document).ready(function() {
 
 <script type = "text/template" id="data-stats">
 <h2><%= d.total %> reported in  <%= name %></h2>
-<% if (typeof(population) != "undefined" && population != "NaN" ) { %> <h2>population <%= population %></h2> <% } %>
+<!--<% if (typeof(population) != "undefined" && population != "NaN" ) { %> <h2>population <%= population %></h2> <% } %>-->
 </script>
 
 <script type = "text/template" id="data-action">
 <% if (typeof(doj) != "undefined") { %>
   <h2>no Federal data</h2>
-  <h2>Federal action: <a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></h2>
+  <h2>Federal action: <span class="doj"><a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></span></h2>
 <% } else { %>
   <h2>no Federal data</h2>
   <h2>no Federal action</h2>
