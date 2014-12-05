@@ -363,7 +363,7 @@ function lockData(d) {
 function showStorify(d) {
   if (d.properties.storify) {
     var url = d.properties.storify.url;
-    url = "//storify.com/ColorOfChange/we-must-stop-alec-a-rally-for-trayvon-martin/"; // temp
+    // console.log('show storify', d.properties.storify.url);
     url = url + "embed" + "?header=false";
     $('#storify')
       .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"</iframe>')
