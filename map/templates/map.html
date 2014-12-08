@@ -26,6 +26,7 @@ var mapWidth = 960,
     dataTitle = null,
     dataStats = null,
     dataAction = null,
+    storyHover = null,
     active = d3.select(null), // selected state
     locked = d3.select(null), // selected county
     bubbles = d3.select(null),
@@ -74,6 +75,14 @@ mapSvg
     //.call(zoom) // allow free zooming
     .call(zoom.event)
     .on('mouseout', initialData);
+
+// initialize hover tips
+var tooltip = d3.select("body")
+  .append("div")
+  .attr("id", d3.functor("tooltip"))
+  .style("position", "absolute")
+  .style("z-index", "100")
+  .style("visibility", "hidden");
 
 function clickedState(d) {
   if (active.node() === this) { return resetZoom(); }
@@ -264,9 +273,10 @@ function drawMap(killedbycops) {
       .on("click", lockData);
 
   bubbles.filter(".storify")
-    .append("svg:title")
-      .text(function(d) { return "Click for the story of "+d.properties.storify.name; } )
-    .on("click", showStorify);
+    .on("click", showStorify)
+    .on("mouseover", showTip)
+    .on("mousemove", moveTip)
+    .on("mouseout", hideTip);
 
   mapSvg.transition()
     .duration(0)
@@ -360,15 +370,22 @@ function lockData(d) {
   }
 }
 
+function showTip(d) {
+  tooltip.html(storyHover({storify: d.properties.storify})); 
+  tooltip.style("visibility", "visible"); 
+}
+function moveTip() {
+  return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+}
+function hideTip() {
+  return tooltip.style("visibility", "hidden");
+}
+
 function showStorify(d) {
-  if (d.properties.storify) {
-    var url = d.properties.storify.url;
-    // console.log('show storify', d.properties.storify.url);
-    url = url + "embed" + "?header=false";
-    $('#storify')
-      .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"</iframe>')
-      .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
-  }
+  var url = d.properties.storify.url + "embed" + "?header=false";
+  $('#storify')
+    .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"</iframe>')
+    .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
 }
 
 function showComments(error, comments) {
@@ -400,6 +417,7 @@ $(document).ready(function() {
   dataTitle = _.template($('script#data-title').html());
   dataStats = _.template($('script#data-stats').html());
   dataAction = _.template($('script#data-action').html());
+  storyHover = _.template($('script#story-hover').html());
   memberComment = _.template($('script#member-comment').html());
 
   // load member comments
@@ -472,6 +490,11 @@ $(document).ready(function() {
   <h2>no Federal data</h2>
   <h2>no Federal action</h2>
 <% } %>
+</script>
+
+<script type= "text/template" id="story-hover">
+  <img src="<%= storify.img %>">
+  <span>Click for the story of <%= storify.name %></span>
 </script>
 
 <script type="text/template" id="member-comment">
