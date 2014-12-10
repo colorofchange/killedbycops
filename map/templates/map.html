@@ -362,6 +362,7 @@ function lockData(d) {
   if (locked.node() === this) {
     d3.select(this).classed('locked',false);
     locked = d3.select(null);
+    ga('send', 'event', 'county-lock', 'data', d.properties.name);
     return;
   } else {
     bubbles.classed('locked',false);
@@ -371,7 +372,7 @@ function lockData(d) {
 }
 
 function showTip(d) {
-  tooltip.html(storyHover({storify: d.properties.storify, img: 'https://killedbycops.s3.amazonaws.com/final/61.jpg'})); 
+  tooltip.html(storyHover({storify: d.properties.storify})); 
   tooltip.style("visibility", "visible"); 
 }
 function moveTip() {
@@ -386,6 +387,7 @@ function showStorify(d) {
   $('#storify')
     .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"</iframe>')
     .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
+  ga('send', 'event', 'storify', 'data', d.properties.name);
 }
 
 function showComments(error, comments) {
