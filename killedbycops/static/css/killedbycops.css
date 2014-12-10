@@ -12,10 +12,12 @@ body {
 /* Typography Styles */
 a {
   text-decoration: none;
+  color: #3e5764;
 }
 
 a:hover {
   text-decoration: none;
+  color: #c83a10;
 }
 
 p {
@@ -88,7 +90,7 @@ header .logo h1 a{
 }
 header .logo h1 a:visited { color:#253035; }
 header .logo h1 a:hover {
-  color:#c00;
+  color:#c83a10;
   /*text-shadow: 1px 1px black;*/
 }
 
@@ -107,7 +109,7 @@ section#content {
 }
 
 #petition {
-  width: 30%;
+  width: 60%;
   float: left;
   clear: left;
   margin-top: 20px;
@@ -115,8 +117,19 @@ section#content {
 
 #members {
   float: left;
-  width: 60%;
+  width: 30%;
   margin-left: 20px;
+  list-style-type: none;
+}
+#members ul { padding: 0 10px; }
+#members ul li {
+  font-size:20px;
+  line-height: 28px;
+  list-style-type: none;
+}
+#members ul li span {
+  display: block;
+  color: #253035;
 }
 
 /* Footer Styles */

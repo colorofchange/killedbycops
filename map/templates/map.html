@@ -371,7 +371,7 @@ function lockData(d) {
 }
 
 function showTip(d) {
-  tooltip.html(storyHover({storify: d.properties.storify})); 
+  tooltip.html(storyHover({storify: d.properties.storify, img: 'https://killedbycops.s3.amazonaws.com/final/61.jpg'})); 
   tooltip.style("visibility", "visible"); 
 }
 function moveTip() {
@@ -392,17 +392,41 @@ function showComments(error, comments) {
   _.each(comments, function(c) {
     $('ul#comments').append(memberComment(c));
   });
+
+  $("#comments li:first-child").addClass("first active"); // Give classes first and active to the first li
+  $("#comments li:last-child").addClass("last"); // Give class last to the last li
+  $("#comments .active").fadeIn(400);
+  cycleComments();
+  setInterval(cycleComments, 5000);
 }
+
+function cycleComments() {
+    if($("#comments .last").is(":visible")){
+        $("#comments .active").removeClass("active");
+        $("#comments .first").addClass("active");
+        $("#comments li:visible").fadeOut(400, function(){
+            $(".active").fadeIn(400);
+            });
+    } else {
+      if($("#comments .active").is(":visible")){
+          $("#comments .active").removeClass("active");
+          $("#comments li:visible").next("li").addClass("active");
+          $(".active").prev("li").fadeOut(400, function(){
+              $(".active").fadeIn(400);
+              });
+      }
+    }
+};
 
 $(document).ready(function() {
   // show introductory overlay
   $('#introduction.overlay').lightbox_me({
     centered: true,
-    overlayCSS: { background: 'black', opacity: 0.75 }
+    overlayCSS: { background: 'black', opacity: 0.75 },
   });
-
+  
   // map loading spinner
-  loading = new Spinner().spin();
+  loading = new Spinner({zIndex: 999}).spin();
   $('#map').append(loading.el);
 
   // load data files asynchronously
@@ -498,7 +522,7 @@ $(document).ready(function() {
 </script>
 
 <script type="text/template" id="member-comment">
-<li><b><%= first_name %> <%= last_name[0].toUpperCase() %> in <%= city %> <%= state %> said:</b> <%- comment %></li>
+<li><b><%- comment %></b> <span>&ndash; <%= first_name %> <%= last_name[0].toUpperCase() %> in <%= city %> <%= state %></span></li>
 </script>
 {% endverbatim %}
 
@@ -523,7 +547,7 @@ $(document).ready(function() {
 </em>
 </div>
 
-<div class="map_wrapper">
+<section class="map_wrapper">
   <div id="data">
     <div class="title"></div>
     <div class="stats"></div>
@@ -555,7 +579,9 @@ $(document).ready(function() {
     </ul>
     <br>Add missing data at <a href="http://www.fatalencounters.org/google-form/" target="_blank">FatalEncounters.org</a>
   </div>
+</section>
 
+<section class="below_map">
   <div id="petition">
     <h2>Enough! Take Action</h2>
     <div class="statement">
@@ -565,10 +591,10 @@ $(document).ready(function() {
   </div>
 
   <div id="members">
-    <h2>What are we Saying?</h2>
+    <h2>Folks Are Saying</h2>
     <ul id="comments"></ul>
   </div>
+</section>
 
-  <div id="storify"></div>
-</div>
+<div id="storify"></div>
 {%endblock%}

@@ -97,9 +97,13 @@ header {
   background: white;
   border:2px solid #253035;
   padding: 10px 20px;
-  border-radius: 5px;
 }
-
+#tooltip img {
+  width:200px;
+}
+#tooltip span {
+  display: block;
+}
 
 #controls {
   float: right;
@@ -111,6 +115,9 @@ header {
   height:20px;
   line-height: 20px;
   background: white;
+  border: 0;
+  outline: 1px inset #253035;
+  outline-offset:-1px;
 }
 #controls a {
   display: block;
