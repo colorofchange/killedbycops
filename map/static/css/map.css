@@ -34,21 +34,23 @@ header {
 #data {
   /* move up and next to logo */
   position: absolute;
-  left: 400px;
+  left: 375px;
   top: 23px;
   z-index: 10;
-  text-shadow:1px 1px white;
-  width: 340px;
+  /*text-shadow:1px 1px white;*/
+  /*width: 350px;*/
 }
 
 #data .title {
 }
 #data h2 {
   font-size: 26px;
+  line-height: 30px;
   margin:0;
 }
 #data h3 {
   font-size: 24px;
+  line-height: 30px;
   margin-top: 5px;
 }
 #data h3 em {
@@ -57,22 +59,28 @@ header {
 
 #action {
   position: absolute;
-  left: 750px;
+  left: 725px;
   top: 23px;
   z-index: 10;
-  text-shadow:1px 1px white;
+  /*text-shadow:1px 1px white;*/
+}
+#action a {
+  color: #3e5764;
 }
 #action h2 {
   font-size: 26px;
+  line-height: 30px;
   margin:0;
 }
 #action h2 span.doj {
-  display: block;
-  clear: left;
-  font-size: 20px;
+  display: inline-block;
+  width: 150px;
+  position: absolute;
+  left: 190px;
 }
 #action h3 {
   font-size: 24px;
+  line-height: 30px;
   margin-top: 5px;
 }
 #action h3 em {
@@ -87,7 +95,7 @@ header {
 }
 #tooltip {
   background: white;
-  border:2px solid black;
+  border:2px solid #253035;
   padding: 10px 20px;
   border-radius: 5px;
 }
@@ -156,19 +164,19 @@ ul#sources li {
 }
 
 .bubble {
-  fill: #E41A1C;
+  fill: #4e4e4e;
   fill-opacity: .5;
-  stroke: #fff;
-  stroke-width: .5px;
+  /*stroke: #fff;
+  stroke-width: .5px;*/
   cursor: default;
   pointer-events: none; /* default no hover */
 }
 .bubble circle.doj {
-  fill: #6A3D9A;
+  fill: #3e5764;
   cursor:pointer;
 }
 .bubble circle.storify {
-  fill: black;
+  fill: #c83a10;
   cursor:pointer;
 }
 .bubble circle.active {
@@ -185,8 +193,9 @@ ul#sources li {
   stroke-width: 1px;
 }
 
-.bubble :hover {
+.bubble circle:hover {
   stroke: #1e1e1e;
+ /* fill-opacity: 1.0; */
 }
 
 .legend circle {

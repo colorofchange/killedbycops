@@ -75,17 +75,22 @@ header .logo h1 a{
   text-decoration:none;
   display:block;
   height: 100%;
+  width: 275px;
   text-transform: uppercase;
   font-style:italic;
   font-weight:bold;
-  color:black;
-  text-shadow: 1px 1px white;
-  /*text-indent:-9999px;*/ /* re-enable when we get a logo */
+  color:#253035;
+  /*text-shadow: 1px 1px white;*/
+  text-indent:-9999px;
+  background-image: url('/static/images/logo.png');
+  background-position-x: 10px;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
-header .logo h1 a:visited { color:black; }
+header .logo h1 a:visited { color:#253035; }
 header .logo h1 a:hover {
   color:#c00;
-  text-shadow: 1px 1px black;
+  /*text-shadow: 1px 1px black;*/
 }
 
 header .logo h2 {
@@ -93,7 +98,8 @@ header .logo h2 {
   margin: 0;
   padding-right: 20px;
   font-size: 26px;
-  text-shadow: 1px 1px white;
+  line-height: 20px;
+  /*text-shadow: 1px 1px white;*/
 }
 
 /* End Header Styles */
