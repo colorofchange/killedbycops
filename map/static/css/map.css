@@ -59,7 +59,7 @@ header {
 
 #action {
   position: absolute;
-  left: 725px;
+  left: 750px;
   top: 23px;
   z-index: 10;
   /*text-shadow:1px 1px white;*/
@@ -111,15 +111,21 @@ header {
   margin-bottom: 20px;
   font-size: 16px;
 }
-#controls select {
-  width: 98%;
-  height: 39px;
+
+#controls .custom-select {
+  height: 22px;
+  padding: 4px 10px;
+  font-size: 12px;
   -webkit-appearance: none;
-  vertical-align: middle;
-  background: #FFFFFF url('/static/images/select_arrow.png') no-repeat center right;
+  -moz-appearance: none;
+  border: 0;
+  outline: 1px outset #253035;
+  outline-offset:-1px;
+  font-family: 'Open Sans';
 }
 #controls a {
   display: block;
+  margin-top: 5px;
 }
 
 #explanation {
@@ -138,9 +144,11 @@ ul#sources li {
   list-style-type:none;
 }
 
-#storify iframe {
-  width: 600px;
+#popover iframe {
+  width: 800px;
 }
+
+/* Map SVG styles */
 
 .background {
   fill: #fff;
@@ -213,9 +221,4 @@ ul#sources li {
   fill: #777;
   font: 10px sans-serif;
   text-anchor: middle;
-}
-
-.button {
-  z-index:10;
-  position:absolute;
 }
