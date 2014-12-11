@@ -269,8 +269,11 @@ function drawMap(killedbycops) {
       })
       .classed("doj", function(d) { return d.properties.hasOwnProperty('doj'); })
       .classed("storify", function(d) { return d.properties.hasOwnProperty('storify'); })
-      .on("mouseover", updateData)
-      .on("click", lockData);
+      .on("mouseover", updateData);
+      //.on("click", lockData);
+
+  bubbles.filter(".doj")
+    .on("click", showDoj);
 
   bubbles.filter(".storify")
     .on("click", showStorify)
@@ -384,10 +387,24 @@ function hideTip() {
 
 function showStorify(d) {
   var url = d.properties.storify.url + "embed" + "?header=false";
-  $('#storify')
-    .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"</iframe>')
+  $('#popover')
+    .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"></iframe>')
     .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
   ga('send', 'event', 'storify', 'data', d.properties.name);
+}
+
+function showDoj(d) {
+  var url = d.properties.doj.url;
+  var sandbox = "";
+  if (url.substr(-3) !== 'pdf') {
+    // sandbox non-pdf urls
+    sandbox="sandbox=allow-scripts allow-same-origin";
+  }
+  console.log(url);
+  $("#popover")
+    .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"'+sandbox+'></iframe>')
+    .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
+  ga('send', 'event', 'doj', 'data', d.properties.name);
 }
 
 function showComments(error, comments) {
@@ -598,5 +615,5 @@ $(document).ready(function() {
   </div>
 </section>
 
-<div id="storify"></div>
+<div id="popover"></div>
 {%endblock%}
