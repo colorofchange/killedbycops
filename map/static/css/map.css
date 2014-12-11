@@ -112,12 +112,11 @@ header {
   font-size: 16px;
 }
 #controls select {
-  height:20px;
-  line-height: 20px;
-  background: white;
-  border: 0;
-  outline: 1px inset #253035;
-  outline-offset:-1px;
+  width: 98%;
+  height: 39px;
+  -webkit-appearance: none;
+  vertical-align: middle;
+  background: #FFFFFF url(/images/select_arrow.png) no-repeat center right;
 }
 #controls a {
   display: block;
