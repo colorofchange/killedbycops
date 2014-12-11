@@ -50,6 +50,11 @@
   padding: 6px 8px;
 }
 
+#petition input.ak-error {
+  background-color: rgb(255,200,200); 
+  border-color: red; 
+}
+
 #petition select {
   width: 98%;
   height: 39px;
