@@ -38,7 +38,7 @@ h1 {
 }
 
 h2 {
-  font-size:26px;
+  font-size:24px;
   line-height:30px;
   font-weight:bold;
 }
@@ -98,7 +98,7 @@ header .logo h2 {
   text-align: right;
   margin: 0;
   padding-right: 20px;
-  font-size: 26px;
+  font-size: 24px;
   line-height: 20px;
   /*text-shadow: 1px 1px white;*/
 }
