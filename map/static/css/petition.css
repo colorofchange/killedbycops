@@ -52,7 +52,7 @@
   height: 39px;
   -webkit-appearance: none;
   vertical-align: middle;
-  background: #FFFFFF url(/images/select_arrow.png) no-repeat center right;
+  background: #FFFFFF url('/static/images/select_arrow.png') no-repeat center right;
 }
 
 #petition #country_drop_down {
