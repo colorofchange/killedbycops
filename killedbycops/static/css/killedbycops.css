@@ -127,16 +127,17 @@ section.below_map {
 }
 #members ul {
   padding: 0 10px;
-  min-height: 50px;
+  min-height: 120px
 }
 #members ul li {
   font-size:20px;
-  line-height: 28px;
+  line-height: 24px;
   list-style-type: none;
 }
 #members ul li span {
   display: block;
   color: #253035;
+  text-align: right;
 }
 
 /* Footer Styles */
