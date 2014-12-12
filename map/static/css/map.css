@@ -34,7 +34,7 @@ header {
 #data {
   /* move up and next to logo */
   position: absolute;
-  left: 375px;
+  left: 350px;
   top: 23px;
   z-index: 10;
   /*text-shadow:1px 1px white;*/
@@ -111,6 +111,10 @@ header {
   margin-right: 50px;
   margin-bottom: 20px;
   font-size: 16px;
+}
+
+#controls .instructions img {
+  vertical-align: middle;
 }
 
 #controls .custom-select {
