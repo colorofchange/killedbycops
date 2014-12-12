@@ -327,12 +327,12 @@ function initialData() {
     // show national numbers
     $('#data .title').html(dataTitle({
       name: "2000-2014",
-      killedbycops: {us: "over " + formatNumber(killedbycops.us.total)}
+      killedbycops: {us: formatNumber(killedbycops.us.total)}
     }));
   }
  
   //$('#data .stats').html('');
-  $('#action .federal').html('<h2>no Federal data</h2><h2>no Federal action</h2>');
+  $('#action .federal').html('<h2>Incomplete Federal data</h2><h2>Insufficient Federal action</h2>');
 }
 
 function updateData(d) {
@@ -534,7 +534,7 @@ $(document).ready(function() {
 
 {% verbatim %}
 <script type = "text/template" id="data-title">
-<h2><%= killedbycops.us %> nationally</h2>
+<h2>Over <%= killedbycops.us %> deaths nationally</h2>
 </script>
 
 <script type = "text/template" id="data-stats">
@@ -544,11 +544,11 @@ $(document).ready(function() {
 
 <script type = "text/template" id="data-action">
 <% if (typeof(doj) != "undefined") { %>
-  <h2>no Federal data</h2>
+  <h2>Incomplete Federal data</h2>
   <h2>Federal action <span class="doj"><a href="<%= doj.url %>" target="_blank"><%= doj.status %></a></span></h2>
 <% } else { %>
-  <h2>no Federal data</h2>
-  <h2>no Federal action</h2>
+  <h2>Incomplete Federal data</h2>
+  <h2>Insufficient Federal action</h2>
 <% } %>
 </script>
 
@@ -570,7 +570,7 @@ $(document).ready(function() {
 
 {%block content%}
 <div id="introduction" class="overlay">
-<h1>#KeepTrack Map</h1>
+<h1>#KilledByCops Map</h1>
 <p>
     The tragic police killing of Mike Brown in Ferguson, MO exposed the nationwide crisis of violent militarized policing to the world. But <em>how often, when, where and under what circumstances</em> do these tragic incidents occur? According to the FBI, that number is approximately 400 per year. But their data only includes self-reported information from less than 750 of the more than 17,000 law enforcement agencies in the US. There could be thousands more killed each year, but <b>because law enforcement agencies aren't required to report police killings, no one knows how many people are killed by police officers each year.</b>
 </p>
