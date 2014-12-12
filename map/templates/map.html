@@ -131,6 +131,9 @@ function zoomToState(d) {
   // update data display
   updateData(d);
 
+  // update instructions
+  $('.instructions').html('Click <img src="/static/images/zoom_out.png"> to zoom out from');
+
   // send to analytics
   ga('send', 'event', 'state', 'zoom', d.properties.name);
 }
@@ -146,6 +149,8 @@ function resetZoom() {
   mapSvg.transition()
       .duration(1000)
       .call(zoom.translate([0, mapYOffset]).scale(1).event);
+
+  $('.instructions').html('Click <img src="/static/images/zoom_in.png"> to zoom in or');
 
   $('select[name="states"]').val(-1);
   $('#data .stats').html('');
@@ -594,10 +599,10 @@ $(document).ready(function() {
   </div>
   <div id="map"></div>
   <div id="controls">
-    Click your state or
+    <span class="instructions">Click <img src="/static/images/zoom_in.png"> to zoom in or</span>
     <div class="custom-select">
       <select name="states">
-      <option value="-1">select one</option>
+      <option value="-1">select state</option>
       {% for code in STATE_CODES %}<option value="{{code.1}}">{{code.0}}</option>{%endfor%}
       </select>
     </div>
