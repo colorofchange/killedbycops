@@ -117,6 +117,12 @@ section.below_map {
   float: left;
   clear: left;
 }
+#petition h2 {
+  margin: 0;
+}
+#petition .statement h3 {
+  margin: 0;
+}
 
 #members {
   float: left;
