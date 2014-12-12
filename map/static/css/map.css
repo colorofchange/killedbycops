@@ -147,6 +147,7 @@ ul#sources li {
 
 #popover iframe {
   width: 800px;
+  background: white;
 }
 
 /* Map SVG styles */
