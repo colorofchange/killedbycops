@@ -1,28 +1,40 @@
-/* Smartphones (portrait and landscape) ----------- */
 @media only screen 
-and (min-device-width : 320px) 
-and (max-device-width : 480px) {
-/* Styles */
+and (max-width : 1024px) {
+  #data h2, #action h2 { font-size: 20px; }
+  #data.contain { width: 300px; }
+  #action { left: 675px; }
 }
 
-/* Smartphones (landscape) ----------- */
-@media only screen 
-and (min-width : 321px) {
-/* Styles */
+@media only screen
+and (max-width: 900px) {
+  #data { left: 33px; top: 80px; }
+  #action { left: 375px; top: 23px; }
+  #data h2, #action h2 { font-size: 18px; }
+  #popover iframe { width: 100%; }
 }
 
-/* Smartphones (portrait) ----------- */
 @media only screen 
-and (max-width : 320px) {
-/* Styles */
+and (max-width: 600px) {
+  #data { left: 20px; top: 420px; }
+  #action { left: 20px; top: 490px; }
+
+  #controls { float:left; margin-top: 120px; }
 }
 
-/* iPads (portrait and landscape) ----------- */
-@media only screen 
-and (min-device-width : 768px) 
-and (max-device-width : 1024px) {
-  h2 { font-size: 20px; }
-  #action { left: 33px; top: 85px;}
-  #action .doj { display: block; left: 0; width: 250px; }
+@media only screen
+and (max-device-width: 320px) {
+  /* phone */
+  header .logo h1 a { width: 225px; }
+  header .logo h2 { line-height: 10px; }
 
-}
+  #data { top: 240px; }
+  #action { top: 330px; }
+  #controls { margin-top: 150px; }
+
+  #explanation { width: 75%; }
+  #petition { width: 67%; }
+  #petition form.ak-form { width: 100%; }
+
+  #members { width: 66%; margin-top: 0; }
+  footer .copyright a { display: block; }
+} 
