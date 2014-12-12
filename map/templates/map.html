@@ -356,6 +356,12 @@ function updateData(d) {
         d: { total: formatNumber(activeD.properties.fatalencounters.total)},
     })+dataHtml;
   }
+  
+  if (d.properties.doj !== undefined) {
+    $('#data').addClass('contain');
+  } else {
+    $('#data').removeClass('contain');
+  }
 
   $('#data .stats').html(dataHtml);
   $('#action .federal').html(dataAction({doj: d.properties.doj}));
@@ -378,7 +384,8 @@ function lockData(d) {
 
 function showTip(d) {
   tooltip.html(storyHover({storify: d.properties.storify})); 
-  tooltip.style("visibility", "visible"); 
+  tooltip.style("visibility", "visible");
+  updateData(d);
 }
 function moveTip() {
   return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");

@@ -38,7 +38,10 @@ header {
   top: 23px;
   z-index: 10;
   /*text-shadow:1px 1px white;*/
-  /*width: 350px;*/
+}
+
+#data.contain {
+  width: 365px;
 }
 
 #data .title {
@@ -73,10 +76,8 @@ header {
   margin:0;
 }
 #action h2 span.doj {
-  display: inline-block;
-  width: 150px;
-  position: absolute;
-  left: 190px;
+  display: block;
+  width: 200px;
 }
 #action h3 {
   font-size: 24px;
