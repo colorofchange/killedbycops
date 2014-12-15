@@ -34,14 +34,16 @@ header {
 #data {
   /* move up and next to logo */
   position: absolute;
-  left: 350px;
+  left: 330px;
   top: 23px;
   z-index: 10;
   /*text-shadow:1px 1px white;*/
+
+  pointer-events: none; /* ugly hack, but allows hover events to go through */
 }
 
 #data.contain {
-  width: 365px;
+  width: 330px;
 }
 
 #data .title {
