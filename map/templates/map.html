@@ -131,6 +131,9 @@ function zoomToState(d) {
   // update data display
   updateData(d);
 
+  // scroll back to top
+  $("html, body").animate({ scrollTop: "0px" });
+
   // update instructions
   $('.instructions').html('Click <img src="/static/images/zoom_out.png"> to zoom out from');
 
