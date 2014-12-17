@@ -8,8 +8,9 @@ v1_api = Api(api_name='v1')
 v1_api.register(FatalEncounterResource())
 
 urlpatterns = patterns('',
-    url(r'^$', 'killedbycops.views.home', name='home'),
-    url(r'^map-test/', 'map.views.map', name='map'),
+    #url(r'^$', 'killedbycops.views.home', name='home'),
+    url(r'^$', 'map.views.map', name='map'),
+    url(r'^map-test/', 'killedbycops.views.redirect_home', name='redirect_home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(v1_api.urls)),
 )
