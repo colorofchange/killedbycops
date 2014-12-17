@@ -292,7 +292,8 @@ function drawMap(killedbycops) {
     .on("click", showDoj);
 
   bubbles.filter(".storify")
-    .on("mouseover", showTip);
+    .on("mouseover", showTip)
+    .on("click", showStorify);
 
   mapSvg.transition()
     .duration(0)
@@ -414,6 +415,17 @@ function moveTip() {
 }
 function hideTip() {
   return $('#tooltip').fadeOut();
+}
+function showStorify(d) {
+  if (d.properties.storify.length > 1) {
+    return false;
+  } else {
+    var url = d.properties.storify[0].url + "embed" + "?header=false";
+    $('#popover')
+      .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"></iframe>')
+      .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
+    ga('send', 'event', 'storify', 'data', d.properties.name);
+  }
 }
 
 function bindStorifyLink() {
@@ -578,8 +590,8 @@ $(document).ready(function() {
 </script>
 
 <script type= "text/template" id="story-hover">
-  <a href="<%= storify.url %>" id="<%= img_name %>"><img src="/static/images/stories/<%= img_name %>.png"></a>
-  <span>Click for the story of <%= storify.name %></span>
+  <a href="<%= storify.url %>" id="<%= img_name %>"><img src="/static/images/stories/<%= img_name %>.png">
+  <span>Click for the story of <%= storify.name %></span></a>
 </script>
 
 <script type="text/template" id="member-comment">
