@@ -103,6 +103,9 @@ header {
 }
 #tooltip img {
   width:200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 #tooltip span {
   display: block;

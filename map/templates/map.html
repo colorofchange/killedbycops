@@ -84,7 +84,7 @@ var tooltip = d3.select("body")
   .attr("id", d3.functor("tooltip"))
   .style("position", "absolute")
   .style("z-index", "100")
-  .style("visibility", "hidden");
+  .style("display", "none");
 
 function clickedState(d) {
   if (active.node() === this) { return resetZoom(); }
@@ -205,7 +205,13 @@ function mergeData(error, us, fatalencounters, dojFocus, stories) {
     var c = _.find(killedbycops.counties, function(d) {
       return d.id === s.FIPS;
     });
-    if (c) { c.properties.storify = {name: s['Name'], url: s['URL'] } }
+    if (c) { 
+      if (c.properties.storify === undefined) {
+        c.properties.storify = [{name: s['Name'], url: s['URL'] }];
+      } else {
+        c.properties.storify.push({name: s['Name'], url: s['URL'] });
+      }
+    }
   });
 
   // rollup state numbers by race, and sum
@@ -286,10 +292,7 @@ function drawMap(killedbycops) {
     .on("click", showDoj);
 
   bubbles.filter(".storify")
-    .on("click", showStorify)
-    .on("mouseover", showTip)
-    .on("mousemove", moveTip)
-    .on("mouseout", hideTip);
+    .on("mouseover", showTip);
 
   mapSvg.transition()
     .duration(0)
@@ -391,23 +394,43 @@ function lockData(d) {
 }
 
 function showTip(d) {
-  tooltip.html(storyHover({storify: d.properties.storify})); 
-  tooltip.style("visibility", "visible");
+  tooltip.html('');
+  _.each(d.properties.storify, function(s) {
+      var img_name = s.name.replace(' ','').replace('-','');
+      //janky d3 html append
+      tooltip.html(tooltip.html() + storyHover({
+        storify: s,
+        img_name: img_name
+      }));
+  });
+  $('#tooltip').show();
+  moveTip();
+
+  bindStorifyLink();
   updateData(d);
 }
 function moveTip() {
   return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
 }
 function hideTip() {
-  return tooltip.style("visibility", "hidden");
+  return $('#tooltip').fadeOut();
 }
 
-function showStorify(d) {
-  var url = d.properties.storify.url + "embed" + "?header=false";
-  $('#popover')
-    .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"></iframe>')
-    .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
-  ga('send', 'event', 'storify', 'data', d.properties.name);
+function bindStorifyLink() {
+  $('#tooltip a').click(function(e) {
+    e.preventDefault();
+    url = this.href + "embed" + "?header=false";
+    $('#popover')
+      .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" allowtransparency="true"></iframe>')
+      .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
+    ga('send', 'event', 'storify', 'data', $(this).id);
+  });
+
+  $('#tooltip').hover(function() {
+    $(this).show();
+  }, function() {
+    hideTip();
+  });
 }
 
 function showDoj(d) {
@@ -417,7 +440,6 @@ function showDoj(d) {
     // sandbox non-pdf urls
     sandbox="sandbox=allow-scripts allow-same-origin";
   }
-  console.log(url);
   $("#popover")
     .html('<iframe src="'+url+'" width="100%" height="750" frameborder="no" '+sandbox+'></iframe>')
     .lightbox_me({ overlayCSS: { background: 'black', opacity: 0.75 } });
@@ -556,7 +578,7 @@ $(document).ready(function() {
 </script>
 
 <script type= "text/template" id="story-hover">
-  <img src="<%= storify.img %>">
+  <a href="<%= storify.url %>" id="<%= img_name %>"><img src="/static/images/stories/<%= img_name %>.png"></a>
   <span>Click for the story of <%= storify.name %></span>
 </script>
 
