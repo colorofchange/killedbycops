@@ -288,8 +288,8 @@ function drawMap(killedbycops) {
       .on("mouseover", updateData);
       //.on("click", lockData);
 
-  bubbles.filter(".doj")
-    .on("click", showDoj);
+  // bubbles.filter(".doj")
+  //   .on("click", showDoj);
 
   bubbles.filter(".storify")
     .on("mouseover", showTip)
@@ -608,8 +608,8 @@ $(document).ready(function() {
 {%block content%}
 <div id="introduction" class="overlay">
 <h1>#KilledByCops Map</h1>
-<p><b>#KilledByCops is an interactive map that chronicles and visualizes a humanizing, detailed, but far-from-complete perspective on the massive scale of police killings nationwide.</b> And since fewer than 5% of law enforcement agencies in the country currently provide information on police killings, a comprehensive data collection of and a national conversation about police homicides in the United States is desperately needed at this time.</p>
-<p><b>One hope for the project is that better data collection and transparency will lead to further accountability for officers that violate human and civil rights</b> &mdash; particularly of Black youth and adults &mdash; who are overwhelmingly the victims of policeabuse and violence. The data for this map is crowd sourced from FatalEncounters.org, an impartial, comprehensive and searchable national database of people killed during interactions with law enforcement.</p>
+<p><b>#KilledByCops is an interactive map that chronicles and visualizes a humanizing, detailed, but far-from-complete perspective on the massive scale of police killings nationwide.</b> And since fewer than 5% of law enforcement agencies in the country currently provide information on police killings, a comprehensive data collection of and a national conversation about police homicides in the United States is desperately needed.</p>
+<p><b>One hope for the project is that better data collection and transparency will lead to further accountability for officers that violate human and civil rights</b> &mdash; particularly of Black youth and adults &mdash; who are overwhelmingly the victims of police abuse and violence. The data for this map is crowd sourced from FatalEncounters.org, an impartial, comprehensive and searchable national database of people killed during interactions with law enforcement.</p>
 <p>The recent bill passed by Congress calling for the collection of nationwide data on police killings is a major step forward towards greater transparency, but as of today, there is no federal database on police use of force. And, according to the data that is public, police kill Black Americans at nearly the same rate as Jim Crow Era lynchings. Discriminatory policing is a national crisis and <b>we need widespread public pressure and engagement to ensure that the government collects this data in a way that leads to swift, real world change and police accountability &mdash; now.</b></p>
 
 <p style="text-align:center;"><button href="" id="close" class="red-button">Click to continue</button></p>
@@ -660,13 +660,13 @@ $(document).ready(function() {
     <div class="statement">
       <h3>National policing crisis calls for national action</h3>
       <p>Will you join us in calling on the federal government to implement critical reforms to end abusive, militarized, and biased policing targeting Black and brown communities?</p>
-      <p><b>Sign on to <a href="http://act.colorofchange.org/sign/federalpolicingreforms/">our letter</a> we'll send on your behalf to the executive branch of the federal government. You can add a personal comment using the box provided.</b></p>
+      <p><b>Sign on to <a href="http://act.colorofchange.org/sign/federalpolicingreforms/">our letter</a> we'll send on your behalf to the federal government. You can add a personal comment using the box provided.</b></p>
     </div>
     {% include "petition.html" with ak_page='federalpolicingreforms' ak_source='map' %}
   </div>
 
   <div id="members">
-    <h2>Folks Are Saying</h2>
+    <h2>Power to the People!</h2>
     <ul id="comments"></ul>
 
     <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/KilledByCops" data-widget-id="519959907886305280">Tweets by @KilledByCops</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
