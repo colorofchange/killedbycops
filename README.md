@@ -1,11 +1,11 @@
 killedbycops
 ============
 
-A Twitter memorial to Americans killed by cops.  
+A visualization of Americans killed by cops.  
 All data provided by FatalEncounters.org  
 Images (c) 2014 ColorOfChange.org 
 
-## Setup
+## Setup Twitter App
 Create a twitter app for the @killedbycops user:
 https://apps.twitter.com
 
@@ -25,3 +25,5 @@ Generate tweets:
 
 Post one tweet an hour, using cron or Heroku delayed jobs:
 > python manage.py post_one_tweet [--geocode]
+
+## D3 Map
