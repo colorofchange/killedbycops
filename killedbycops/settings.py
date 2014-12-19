@@ -78,6 +78,8 @@ DATABASES = {'default': dj_database_url.config(default='sqlite:///db.sqlite3')}
 from memcacheify import memcacheify
 CACHES = memcacheify()
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
