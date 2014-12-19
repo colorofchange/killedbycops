@@ -20,6 +20,8 @@ header {
   margin-bottom: 10px;
   vertical-align: top;
   overflow: hidden;
+  cursor: -webkit-zoom-in;
+  cursor: -moz-zoom-in;
   cursor:zoom-in;
   z-index:0;
 }
@@ -177,6 +179,8 @@ ul#sources li {
 }
 .state.active {
   fill: #aaa;
+  cursor: -webkit-zoom-out;
+  cursor: -moz-zoom-out;
   cursor:zoom-out;
 }
 
