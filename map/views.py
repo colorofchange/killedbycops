@@ -55,4 +55,6 @@ def map(request):
     ('Wyoming', 56)
   )
 
-  return render(request, 'map.html', {'STATE_CODES': STATE_CODES})
+  return render(request, 'map.html', {'STATE_CODES': STATE_CODES,
+    'title': "KilledByCops 2000-2014 | Thousands Killed. Incomplete Data. Insufficient Action."}
+  )
