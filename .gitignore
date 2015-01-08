@@ -53,6 +53,12 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#Static Site
 staticfiles/*
 !staticfiles/collectstatic.txt
+_site/*
+
+secrets.sh
 settings_local.py
+
