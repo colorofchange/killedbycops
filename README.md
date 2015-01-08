@@ -1,9 +1,9 @@
-killedbycops
+KilledByCops
 ============
 
 A visualization of Americans killed by cops: 2000-2014
 * Data from FatalEncounters.org, US Census, Center for Constitutional Policing
-* Images and map design (c) 2014 ColorOfChange.org 
+* Images and map design &copy; 2014 ColorOfChange.org 
 
 # Overview
 
