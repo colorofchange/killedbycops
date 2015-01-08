@@ -48,7 +48,8 @@ INSTALLED_APPS = (
     'tastypie',
     'fatalencounters',
     'tweets',
-    'map'
+    'map',
+    'django_medusa', #static site renderer
 )
 
 MIDDLEWARE_CLASSES = (
@@ -95,7 +96,7 @@ USE_TZ = True
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = '_site/static'
 STATIC_URL = '/static/'
 
 STATICFILES_FINDERS = (
@@ -115,6 +116,11 @@ COMPRESS_ENABLED = False
 
 import django
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, "templates"), os.path.dirname(django.__file__))
+
+# static file renderer
+MEDUSA_RENDERER_CLASS = "django_medusa.renderers.DiskStaticSiteRenderer"
+MEDUSA_MULTITHREAD = True
+MEDUSA_DEPLOY_DIR = os.path.abspath(os.path.join(BASE_DIR,'..','_site'))
 
 try:
     from settings_local import *
