@@ -2,8 +2,8 @@ killedbycops
 ============
 
 A visualization of Americans killed by cops: 2000-2014
-Data from FatalEncounters.org, US Census, Center for Constitutional Policing
-Images and map design (c) 2014 ColorOfChange.org 
+* Data from FatalEncounters.org, US Census, Center for Constitutional Policing
+* Images and map design (c) 2014 ColorOfChange.org 
 
 # Overview
 
@@ -42,12 +42,13 @@ In the future this should be easier, as FatalEncounters moves to a new database 
 The map is created with D3, with the database and documents saved as JSON files. If running the server locally, you can recreate the cache file with `cd map/data; make`.
 
 ### Census Data
-Download from http://factfinder2.census.gov. Specific instructions at http://bost.ocks.org/mike/bubble-map/#finding-data 
+Download from http://factfinder2.census.gov. Specific instructions at http://bost.ocks.org/mike/bubble-map/#finding-data
+
 Take care with updating the US Census data to new American Community Survey years, some areas may be missing in the 2013 data.
 
 ## Static Site Rendering
 
-Render the html and static files to _site with
+Render the html and static files to _site with:
 > python manage.py staticsitegen
 > python manage.py collectstatic
 
