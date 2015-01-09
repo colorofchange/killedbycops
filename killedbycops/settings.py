@@ -96,7 +96,7 @@ USE_TZ = True
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = '_site/static'
+STATIC_ROOT = '../killedbycops_static/static/'
 STATIC_URL = '/static/'
 
 STATICFILES_FINDERS = (
@@ -120,7 +120,7 @@ TEMPLATE_DIRS = (os.path.join(BASE_DIR, "templates"), os.path.dirname(django.__f
 # static file renderer
 MEDUSA_RENDERER_CLASS = "django_medusa.renderers.DiskStaticSiteRenderer"
 MEDUSA_MULTITHREAD = True
-MEDUSA_DEPLOY_DIR = os.path.abspath(os.path.join(BASE_DIR,'..','_site'))
+MEDUSA_DEPLOY_DIR = os.path.abspath(os.path.join(BASE_DIR,'..','..','killedbycops_static'))
 
 try:
     from settings_local import *

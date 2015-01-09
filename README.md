@@ -48,9 +48,9 @@ Take care with updating the US Census data to new American Community Survey year
 
 ## Static Site Rendering
 
-Render the html and static files to _site with:
+Render the html and static files with:
 > python manage.py staticsitegen
 > python manage.py collectstatic
 
-Push to gh-pages branch, and GitHub Pages will serve it for free.
+Push the resulting directory to a gh-pages branch, and GitHub Pages will serve it for free.
 
