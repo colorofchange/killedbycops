@@ -32,8 +32,8 @@ Post one tweet an hour, using cron or Heroku delayed jobs:
 
 ## FatalEncounters Data
 
-Their data is stored in a google spreadsheet, which we have cached and cleaned up slightly at `fatalencounters/data/fatal-encounters.csv`. New unproofed data is appended after a yellow line in the spreadsheet; but since we don't get color output in the csv, you'll need to pass that row number (at last check, Raymond Dixon #3614).
-You can download a new copy with `> python manage.py update_fatal_encounters --pull_from_web --last_proofed_row 3614`. You will then need to apply a patch with typo and state corrections with `git apply --check fatalencounters/data/data-county-cleanup.patch`.
+Their data is stored in a google spreadsheet, which we have cached and cleaned up slightly at `fatalencounters/data/fatal-encounters.csv`. New unproofed data is appended after a yellow line in the spreadsheet; but since we don't get color output in the csv, you'll need to pass that row number (at last check, Dixon Rodriguez #4259).
+You can download a new copy with `> python manage.py update_fatal_encounters --pull_from_web --last_proofed_row 4259`. You will then need to apply a patch with typo and state corrections with `git apply --check fatalencounters/data/data-county-cleanup.patch`.
 
 In the future this should be easier, as FatalEncounters moves to a new database with an API.
 
