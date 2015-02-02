@@ -108,8 +108,8 @@ function zoomToState(d) {
 
   scaleFactor = 0.9;
   // northeastern states needs to be zoomed out a little
-  if (d.id == "36") { scaleFactor = 0.75; } //NY
   if (d.id == "25") { scaleFactor = 0.75; } //MA
+  if (d.id == "36") { scaleFactor = 0.6; } //NY
   if (d.id == "09") { scaleFactor = 0.5; } //CT
   if (d.id == "44") { scaleFactor = 0.3; } //RI
   if (d.id == "11") { scaleFactor = 0.2; } //DC
@@ -184,12 +184,18 @@ function mergeData(error, us, fatalencounters, dojFocus, stories) {
   var usCounties = topojson.feature(us, us.objects.counties).features;
   killedbycops.counties = _.map(killedbycops.counties, function(county) {
       geom = _.find(usCounties, function(g) { return g.id === county.key; } );
-      geom.properties.type = "county";
-      geom.properties.fatalencounters = {
-        race: county.values,
-        total: d3.sum(county.values, function(d) { return d.values; })
-      };
-    return geom;
+      if (geom) {
+        geom.properties.type = "county";
+        geom.properties.fatalencounters = {
+          race: county.values,
+          total: d3.sum(county.values, function(d) { return d.values; })
+        };
+      return geom;
+    } else {
+      return null;
+    }
+  }).filter(function(c){
+    return (c !== null) && (c.key !== null)
   });
 
   // merge DOJ focus areas
@@ -216,7 +222,7 @@ function mergeData(error, us, fatalencounters, dojFocus, stories) {
 
   // rollup state numbers by race, and sum
   killedbycops.states = d3.nest()
-    .key(function(d) { return d.county_fips.substring(0,2); })
+    .key(function(d) { if (d.county_fips) { return d.county_fips.substring(0,2); } })
     .key(function(d) { return d.race; })
     .rollup(function(l) { return l.length; })
     .entries(fatalencounters.objects);
@@ -228,13 +234,15 @@ function mergeData(error, us, fatalencounters, dojFocus, stories) {
   var usStates = topojson.feature(us, us.objects.states).features;
   killedbycops.states = _.map(killedbycops.states, function(state) {
       geom = _.find(usStates, function(g) { return g.id === state.key; } );
-      geom.properties.type = "state";
-      geom.properties.fatalencounters = {
-        race: state.values,
-        total: d3.sum(state.values, function(d) { return d.values; })
-      };
-      geom.properties.name = stateFIPS[Number(geom.id)];
-    return geom;
+      if(geom) {
+        geom.properties.type = "state";
+        geom.properties.fatalencounters = {
+          race: state.values,
+          total: d3.sum(state.values, function(d) { return d.values; })
+        };
+        geom.properties.name = stateFIPS[Number(geom.id)];
+      return geom;
+    }
   });
 
   // compute state border mesh
