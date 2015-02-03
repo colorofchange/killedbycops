@@ -7,6 +7,7 @@ import csv
 import os, sys
 
 from fatalencounters.models import FatalEncounter
+from data_corrections import corrections
 
 class Command(BaseCommand):
     args = '--pull_from_web'
@@ -134,6 +135,15 @@ class Command(BaseCommand):
                         print 'row',row_num,'created',fe.name,':', fe.race
                     else:
                         print 'row',row_num,'updated',fe.name,':', fe.race
+
+                    if fe.name in corrections:
+                        print 'corrected',
+                        for (key,value) in corrections[fe.name].items():
+                            setattr(fe,key,value) #because django models won't do obj[key] = value
+                            print '%s to %s' % (key,value),
+                        fe.save()
+                        print
+
                 except Exception, e:
                     print 'error saving #',row_num
                     print e
