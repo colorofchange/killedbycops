@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 #    'compressor',
     'tastypie',
+    'admin_exporter',
     'fatalencounters',
     'tweets',
     'map',

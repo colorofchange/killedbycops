@@ -2,6 +2,7 @@ APScheduler==3.0.0
 Django==1.7
 dj-database-url==0.3.0
 django-appconf==0.6
+-e git+https://github.com/RyanBalfanz/django-admin-exporter.git#egg=django-admin-exporter
 django-compressor==1.4
 django-heroku-memcacheify==0.7
 django-medusa==0.3.0
