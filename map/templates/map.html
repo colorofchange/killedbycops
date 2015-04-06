@@ -44,8 +44,8 @@ var path = d3.geo.path()
 
 // radius of county bubbles is scaled on sqrt, for area comparisons
 var radius = d3.scale.sqrt()
-    .domain([0, 150]) // for total fatal encounters
-    .range([0, 30]);
+    .domain([0, 300]) // expect number of fatal encounters per county
+    .range([0, 30]); // output range in px
 
 
 // main svg object

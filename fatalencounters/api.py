@@ -19,7 +19,7 @@ class FatalEncounterResource(ModelResource):
 
         excludes = ['proofed', 'photo_url', 'source_url']
         resource_name = 'fatalencounters'
-        max_limit = 5000
+        max_limit = 10000
 
         filtering = {
             'date_of_injury': ['exact', 'lt', 'lte', 'gte', 'gt'],

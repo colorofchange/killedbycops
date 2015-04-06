@@ -22,12 +22,16 @@ class Command(BaseCommand):
         make_option('--last_proofed_row',
             action='store',
             type="int",
-            default=0,
+            default=None,
             dest='last_proofed_row',
             help='Last from the spreadsheet that was proofed by editors'),
         )
 
     def handle(self, *args, **options):
+        if not options['last_proofed_row']:
+            print "last_proofed_row option required. Open CSV and look for line # for Dixon Rodriguez. See README for justification."
+            sys.exit(-1)
+
         if options['pull_from_web']:
             spreadsheet_url = "https://docs.google.com/spreadsheet/pub?key=0Aul9Ys3cd80fdHNuRG5VeWpfbnU4eVdIWTU3Q0xwSEE&output=csv"
             urlopener = urllib.URLopener()
