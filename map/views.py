@@ -56,5 +56,5 @@ def map(request):
   )
 
   return render(request, 'map.html', {'STATE_CODES': STATE_CODES,
-    'title': "KilledByCops 2000-2014 | Thousands Killed. Incomplete Data. Insufficient Action."}
+    'title': "KilledByCops 2000-2015 | Thousands Killed. Incomplete Data. Insufficient Action."}
   )
