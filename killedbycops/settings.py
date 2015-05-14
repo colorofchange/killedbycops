@@ -26,14 +26,14 @@ TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-ADMINS = (('Josh Levinger','josh@levinger.net'),)
+ADMINS = (('Josh Levinger', 'josh@levinger.net'),)
 EMAIL_SUBJECT_PREFIX = '[KilledByCops] '
 
-EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
-EMAIL_HOST= 'smtp.sendgrid.net'
+EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', 'user')
+EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD', '')
 
 # Application definition
 
