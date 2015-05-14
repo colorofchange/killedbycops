@@ -62,3 +62,4 @@ _site/*
 secrets.sh
 settings_local.py
 
+.env
