@@ -113,6 +113,9 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+MEDIA_ROOT = 'mediafiles'
+MEDIA_URL = '/media/'
+
 COMPRESS_ENABLED = False
 #TODO, figure out compress and heroku
 
