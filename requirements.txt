@@ -1,8 +1,9 @@
 APScheduler==3.0.0
 Django==1.7
+Pillow==2.8.1
 dj-database-url==0.3.0
+-e git+https://github.com/RyanBalfanz/django-admin-exporter.git@55eac7f3fcf8848ea66a041abbb9194de650d3a9#egg=django_admin_exporter-master
 django-appconf==0.6
--e git+https://github.com/RyanBalfanz/django-admin-exporter.git#egg=django-admin-exporter
 django-compressor==1.4
 django-heroku-memcacheify==0.7
 django-medusa==0.3.0
@@ -23,6 +24,7 @@ six==1.8.0
 static3==0.5.1
 tweepy==2.3.0
 tzlocal==1.1.1
+unicodecsv==0.11.0
 waitress==0.8.9
 whitenoise==1.0.3
 wsgiref==0.1.2

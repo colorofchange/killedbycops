@@ -13,7 +13,7 @@ class County(models.Model):
         return "%s%s" % (self.state_ansi, self.county_ansi)
 
     def __unicode__(self):
-        return self.name
+        return "%s, %s" % (self.name, self.state)
 
     class Meta:
         verbose_name_plural = "counties"
@@ -22,7 +22,16 @@ class County(models.Model):
 class StoryEmbed(models.Model):
     name = models.CharField(max_length=255)
     county = models.ForeignKey(County, null=True)
+    image = models.ImageField(upload_to="images/stories")
     url = models.URLField()
 
     def __unicode__(self):
         return self.name
+
+    def image_tag(self):
+        if self.image:
+            return "<img src=/media/%s width='100'/>" % self.image
+        else:
+            return ""
+    image_tag.short_description = "Image"
+    image_tag.allow_tags = True
