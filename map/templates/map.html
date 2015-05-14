@@ -209,13 +209,13 @@ function mergeData(error, us, fatalencounters, dojFocus, stories) {
   // merge highlighted stories
   _.each(stories, function(s) {
     var c = _.find(killedbycops.counties, function(d) {
-      return d.id === s.FIPS;
+      return d.id === s.county_fips;
     });
     if (c) { 
       if (c.properties.storify === undefined) {
-        c.properties.storify = [{name: s['Name'], url: s['URL'] }];
+        c.properties.storify = [{name: s['name'], url: s['url'], image: s['image']}];
       } else {
-        c.properties.storify.push({name: s['Name'], url: s['URL'] });
+        c.properties.storify.push({name: s['name'], url: s['url'], image: s['image']});
       }
     }
   });
@@ -405,12 +405,8 @@ function lockData(d) {
 function showTip(d) {
   tooltip.html('');
   _.each(d.properties.storify, function(s) {
-      var img_name = s.name.replace(' ','').replace('-','');
       //janky d3 html append
-      tooltip.html(tooltip.html() + storyHover({
-        storify: s,
-        img_name: img_name
-      }));
+      tooltip.html(tooltip.html() + storyHover({ storify: s }));
   });
   $('#tooltip').show();
   moveTip();
@@ -512,7 +508,7 @@ $(document).ready(function() {
       .defer(d3.json, "{% static 'data/us.json' %}")
       .defer(d3.json, "{% static 'data/fatalencounters.json' %}")
       .defer(d3.csv, "{% static 'data/doj_focus.csv' %}")
-      .defer(d3.csv, "{% static 'data/stories.csv' %}")
+      .defer(d3.json, "map/stories.json")
       .await(mergeData);
 
   // compile data templates
@@ -598,7 +594,7 @@ $(document).ready(function() {
 </script>
 
 <script type= "text/template" id="story-hover">
-  <a href="<%= storify.url %>" id="<%= img_name %>"><img src="/static/images/stories/<%= img_name %>.png">
+  <a href="<%= storify.url %>" id="story-<%= storify.name %>"><img src="<%= storify.image %>">
   <span>Click for the story of <%= storify.name %></span></a>
 </script>
 
