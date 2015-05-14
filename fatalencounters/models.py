@@ -1,4 +1,5 @@
 from django.db import models
+from map.models import County, COUNTY_NAME_TYPES
 
 #2010 CENSUS CATEGORIES
 RACE_CHOICES = (
@@ -40,6 +41,7 @@ class FatalEncounter(models.Model):
     photo_tag.allow_tags = True
 
     def county_fips(self):
+        """ do lookup from in-exact county name to FIPS code """
         cleaned_name = self.county
 
         #remove 'county' for lookup
@@ -73,19 +75,3 @@ class FatalEncounter(models.Model):
                 # do manual reconciliation?
                 return None
         return None
-COUNTY_NAME_TYPES = ('County', 'Parish', 'Borough', 'Census Area', 'Municipality')
-
-class County(models.Model):
-  state = models.CharField(max_length=2)
-  state_ansi = models.CharField(max_length=2)
-  county_ansi = models.CharField(max_length=3)
-  name = models.TextField(max_length=255)
-
-  def fips_code(self):
-    return "%s%s" % (self.state_ansi, self.county_ansi)
-
-  def __unicode__(self):
-    return self.name
-
-  class Meta:
-    verbose_name_plural = "counties"

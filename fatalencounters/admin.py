@@ -1,5 +1,5 @@
 from django.contrib import admin
-from fatalencounters.models import FatalEncounter, County
+from fatalencounters.models import FatalEncounter
 
 from admin_exporter.actions import export_as_csv_action
 
@@ -16,11 +16,5 @@ class FatalEncounterAdmin(admin.ModelAdmin):
     ]
 
 
-class CountyAdmin(admin.ModelAdmin):
-    list_display = ('fips_code', 'name', 'state')
-    list_filter = ('state',)
-    search_fields = ('name',)
-
 admin.site.add_action(export_as_csv_action)
 admin.site.register(FatalEncounter, FatalEncounterAdmin)
-admin.site.register(County, CountyAdmin)
