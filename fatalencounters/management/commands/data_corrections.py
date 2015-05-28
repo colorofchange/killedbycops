@@ -10,6 +10,7 @@ corrections = {
     'Lorenzo J. Ciaramella': {'state': 'CA'},
     'James D. Jones': {'state': 'IN'},
     'Bobby Shane Patrick': {'state': 'AR'},
+    'Justin Lenard Elmore': {'state': 'GA'},
 
     #common misspellings
     #Columbia (with a U), DC
