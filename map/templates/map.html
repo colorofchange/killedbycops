@@ -34,6 +34,7 @@ var mapWidth = 960,
     bubbles = d3.select(null),
     loading = null,
     killedbycops = {};
+var MAX_FE_COUNTY = 150; // largest expected per county, for sqrt bubble scale
 
 var formatNumber = d3.format(",.0f");
 var formatPercent = d3.format(".1%");
@@ -42,10 +43,11 @@ var formatPercent = d3.format(".1%");
 var path = d3.geo.path()
     .projection(null);
 
-// radius of county bubbles is scaled on sqrt, for area comparisons
+// radius of county bubbles is scaled on sqrt, for proper area comparisons
+// doubling of 2nd,3rd value means we effectively cap at max radius even for outliers
 var radius = d3.scale.sqrt()
-    .domain([0, 300]) // expect number of fatal encounters per county
-    .range([0, 30]); // output range in px
+    .domain([0, MAX_FE_COUNTY, MAX_FE_COUNTY]) // expected number of fatal encounters per county
+    .rangeRound([1, 20, 20]); // output range in px
 
 
 // main svg object
@@ -325,7 +327,7 @@ function scalePopulation() {
 }
 
 function scaleRaw() {
- radius.domain([0, 200]); // for total fatal encounters
+ radius.domain([0, MAX_FE_COUNTY, MAX_FE_COUNTY]); // for total fatal encounters
  bubbles
     .transition()
     .attr("r", function(d) {
