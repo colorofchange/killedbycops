@@ -41,7 +41,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         if options['pull_from_web']:
-            spreadsheet_url = "https://docs.google.com/spreadsheet/pub?key=0Aul9Ys3cd80fdHNuRG5VeWpfbnU4eVdIWTU3Q0xwSEE&output=csv"
+            spreadsheet_url = "https://docs.google.com/spreadsheets/d/1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE/pub?output=csv"
             urlopener = urllib.URLopener()
             urlopener.retrieve(spreadsheet_url, "fatalencounters/data/fatal-encounters.csv")
             print 'Updated data/fatal-encounters.csv'
