@@ -3,6 +3,7 @@ from optparse import make_option
 
 import urllib
 from datetime import datetime
+import dateutil
 import csv
 import os, sys
 import logging
@@ -131,7 +132,7 @@ class Command(BaseCommand):
 
                     #handle malformed dates
                     try:
-                        data['date_of_injury'] = datetime.strptime(row[6],'%B %d, %Y')
+                        data['date_of_injury'] = dateutil.parser.parse(row[6])
                     except ValueError,e:
                         print 'date parse error'
                         print e
@@ -141,11 +142,11 @@ class Command(BaseCommand):
                         if date.year < 1900:
                             #assume it's actually in 20xx
                             corrected_year = int('20' + str(date.year)[-2:])
-                            logger.warning('fixing year "%s" for %s to %s' % (fe.year, fe.name, corrected_year))
+                            logger.warning('fixing year "%s" for %s to %s' % (date.year, data['name'], corrected_year))
                             data['date_of_injury'] = date.replace(year=corrected_year)
                         if date.year > datetime.today().year:
                             this_year = datetime.today().year
-                            logger.warning('fixing year "%s" for %s to %s' % (fe.year, fe.name, this_year))
+                            logger.warning('fixing year "%s" for %s to %s' % (date.year, data['name'], this_year))
                             data['date_of_injury'] = date.replace(year=this_year)
 
                     #filter non-numeric ages
