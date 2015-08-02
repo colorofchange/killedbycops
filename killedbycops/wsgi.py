@@ -11,9 +11,6 @@ import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "killedbycops.settings")
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR, 'mediafiles'))  # DRY, get this from django settings?
-print "loading waitress"
-print "BASE_DIR", BASE_DIR
-print "MEDIA_ROOT", MEDIA_ROOT
 
 from django.core.wsgi import get_wsgi_application
 from whitenoise.django import DjangoWhiteNoise

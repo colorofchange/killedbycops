@@ -14,7 +14,7 @@ clean:
 
 #copy files from API
 fatalencounters.json:
-	curl -o fatalencounters.json 'http://localhost:8000/api/v1/fatalencounters/?format=json&limit=0' 
+	curl -o fatalencounters.json 'http://127.0.0.1:8000/api/v1/fatalencounters/?format=json&limit=0' 
 
 #and from google spreadsheet
 doj_focus.csv:
